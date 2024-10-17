@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from models import db, User, Product, Cart, CartItem, Category, ProductCategory
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_cors import CORS
-app = Flask(__name__)
+app = Flask(_name_)
 api = Api(app)
 CORS(app)
 # Configurations
@@ -160,5 +160,5 @@ api.add_resource(UserSignupAPI, '/signup')
 api.add_resource(ProductAPI, '/products', '/products/<int:category_id>')
 api.add_resource(CartAPI, '/carts/<int:user_id>')
 
-if __name__ == '__main__':
+if _name_ == '_main_':
     app.run(port=5555, debug=True)
