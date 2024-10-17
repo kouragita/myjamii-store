@@ -3,10 +3,10 @@ from flask_restful import Api, Resource, reqparse
 from flask_sqlalchemy import SQLAlchemy
 from models import db, User, Product, Cart, CartItem, Category, ProductCategory
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from flask_cors import CORS
 app = Flask(__name__)
 api = Api(app)
-
+CORS(app)
 # Configurations
 app.config['SECRET_KEY'] = 'your_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ecommerce.db'
