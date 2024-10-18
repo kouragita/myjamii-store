@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from models import db, User, Product, Cart, CartItem, Category, ProductCategory
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_cors import CORS
-app = Flask(_name_)
+app = Flask(__name__)
 api = Api(app)
 CORS(app)
 # Configurations
@@ -80,29 +80,23 @@ class ProductAPI(Resource):
                 'image_url': product.image_url
             })
         return jsonify({'products': output})
+    
+class CategoryAPI(Resource):
+    def get(self):
+        categories = Category.query.all()
+        if not categories:
+            return jsonify({'message': 'No categories found'}), 404
 
-# class CartAPI(Resource):
-#     def get(self, user_id):
-#         cart = Cart.query.filter_by(user_id=user_id).first()
-#         if cart:
-#             items = []
-#             for item in cart.items:
-#                 items.append({'product_id': item.product_id, 'quantity': item.quantity})
-#             return jsonify({'items': items})
-#         return jsonify({'error': 'Cart not found'}), 404
+        output = []
+        for category in categories:
+            output.append({
+                'id': category.id,
+                'name': category.name,
+                'description': category.description
+            })
+        return jsonify({'categories': output})
 
-#     def post(self, user_id):
-#         parser = reqparse.RequestParser()
-#         parser.add_argument('product_id', type=int)
-#         parser.add_argument('quantity', type=int)
-#         args = parser.parse_args()
-#         cart = Cart.query.filter_by(user_id=user_id).first()
-#         if cart:
-#             item = CartItem(cart_id=cart.id, product_id=args['product_id'], quantity=args['quantity'])
-#             db.session.add(item)
-#             db.session.commit()
-#             return jsonify({'message': 'Item added to cart successfully'})
-#         return jsonify({'error': 'Cart not found'}), 404
+
 class CartAPI(Resource):
     def get(self, user_id):
         cart = Cart.query.filter_by(user_id=user_id).first()
@@ -159,6 +153,7 @@ api.add_resource(UserLoginAPI, '/login')
 api.add_resource(UserSignupAPI, '/signup')
 api.add_resource(ProductAPI, '/products', '/products/<int:category_id>')
 api.add_resource(CartAPI, '/carts/<int:user_id>')
+api.add_resource(CategoryAPI, '/categories')
 
-if _name_ == '_main_':
+if __name__ == '__main__':
     app.run(port=5555, debug=True)
