@@ -1,8 +1,8 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; // Ensure you have react-router-dom installed
-import { FaShoppingCart } from 'react-icons/fa'; // Importing a cart icon from react-icons (ensure you have installed react-icons)
+import { Link } from 'react-router-dom';
+import { FaShoppingCart } from 'react-icons/fa';
 
-const Navbar = () => {
+const Navbar = ({ onLogout, user }) => { // Accept user as a prop
     return (
         <nav style={styles.navbar}>
             <div style={styles.logo}>
@@ -21,12 +21,20 @@ const Navbar = () => {
                 <li style={styles.navItem}>
                     <Link to="/about" style={styles.link}>About</Link>
                 </li>
-                {/* Adding Cart link */}
                 <li style={styles.navItem}>
                     <Link to="/cart" style={styles.cartLink}>
                         <FaShoppingCart size={20} />
-                        {/* You can also display the cart count next to the cart icon */}
                     </Link>
+                </li>
+                <li style={styles.navItem}>
+                    {user ? (
+                        <div>
+                            <span style={styles.link}>Welcome, {user.username}</span>
+                            <button onClick={onLogout} style={styles.link}>Logout</button>
+                        </div>
+                    ) : (
+                        <Link to="/login" style={styles.link}>Login</Link>
+                    )}
                 </li>
             </ul>
         </nav>
