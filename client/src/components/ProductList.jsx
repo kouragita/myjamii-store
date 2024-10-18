@@ -6,6 +6,7 @@ const ProductList = ({ addToCart }) => {
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('');
 
+    // Fetch products and categories on component mount
     useEffect(() => {
         const fetchProducts = async () => {
             const response = await axios.get('http://localhost:5555/products');
@@ -21,6 +22,7 @@ const ProductList = ({ addToCart }) => {
         fetchCategories();
     }, []);
 
+    // Filter products by selected category
     const filteredProducts = selectedCategory
         ? products.filter(product => product.categories.some(category => category.name === selectedCategory))
         : products;
@@ -28,12 +30,16 @@ const ProductList = ({ addToCart }) => {
     return (
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
             <h2>Products</h2>
+            
+            {/* Category Filter Dropdown */}
             <select onChange={(e) => setSelectedCategory(e.target.value)} style={{ margin: '10px', padding: '10px' }}>
                 <option value="">All Categories</option>
                 {categories.map(category => (
                     <option key={category.id} value={category.name}>{category.name}</option>
                 ))}
             </select>
+
+            {/* Display Filtered Products */}
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
                 {filteredProducts.map(product => (
                     <div key={product.id} style={{ border: '1px solid #ccc', margin: '10px', padding: '10px', width: '200px' }}>
@@ -41,7 +47,18 @@ const ProductList = ({ addToCart }) => {
                         <h3>{product.name}</h3>
                         <p>{product.description}</p>
                         <p>Price: ${product.price}</p>
-                        <button onClick={() => addToCart(product.id)} style={{ padding: '5px 10px' }}>Add to Cart</button>
+                        {/* Add to Cart button with full product details passed */}
+                        <button 
+                            onClick={() => addToCart({ 
+                                id: product.id, 
+                                name: product.name, 
+                                price: product.price, 
+                                image_url: product.image_url 
+                            })} 
+                            style={{ padding: '5px 10px' }}
+                        >
+                            Add to Cart
+                        </button>
                     </div>
                 ))}
             </div>

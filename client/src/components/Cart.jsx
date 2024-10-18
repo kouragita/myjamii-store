@@ -8,10 +8,16 @@ const Cart = ({ cartItems, removeFromCart }) => {
                 <p>Your cart is empty</p>
             ) : (
                 <ul style={{ listStyleType: 'none', padding: 0 }}>
-                    {cartItems.map((itemId, index) => (
-                        <li key={index} style={{ margin: '10px 0' }}>
-                            <span>Item ID: {itemId}</span>
-                            <button onClick={() => removeFromCart(itemId)} style={{ marginLeft: '10px', padding: '5px 10px' }}>
+                    {cartItems.map((item, index) => (
+                        <li key={index} style={{ margin: '10px 0', borderBottom: '1px solid #ccc', paddingBottom: '10px' }}>
+                            <div>
+                                <strong>{item.name}</strong> - ${item.price}
+                            </div>
+                            <div>
+                                Quantity: {item.quantity}
+                            </div>
+                            <button onClick={() => removeFromCart(item.product_id)} 
+                                    style={{ marginLeft: '10px', padding: '5px 10px', backgroundColor: 'red', color: 'white', border: 'none', cursor: 'pointer' }}>
                                 Remove
                             </button>
                         </li>
