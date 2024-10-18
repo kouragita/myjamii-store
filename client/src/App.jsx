@@ -5,6 +5,7 @@ import Login from './components/Login';
 import Signup from './components/Signup';
 import ProductList from './components/ProductList';
 import Cart from './components/Cart';
+import Home from './components/Home';
 
 const App = () => {
     const [user, setUser ] = useState(null);
@@ -32,6 +33,7 @@ const App = () => {
         <Router>
             <Navbar />
             <Routes>
+                <Route path="/" element={<Home />} />
                 <Route path="/" element={user ? <ProductList addToCart={addToCart} /> : <Login onLogin={handleLogin} />} />
                 <Route path="/products" element={<ProductList addToCart={addToCart} />} />
                 <Route path="/signup" element={<Signup onSignup={handleSignup} />} />

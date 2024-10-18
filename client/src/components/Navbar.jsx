@@ -5,7 +5,7 @@ const Navbar = () => {
     return (
         <nav style={styles.navbar}>
             <div style={styles.logo}>
-                <h1>Myjamii</h1>
+                <h1>MyJamii</h1>
             </div>
             <ul style={styles.navLinks}>
                 <li style={styles.navItem}>
