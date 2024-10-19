@@ -241,5 +241,6 @@ api.add_resource(CartAPI, '/carts/<int:user_id>')
 api.add_resource(CategoryAPI, '/categories')
 
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5555)
+if __name__ == '_main_':
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
