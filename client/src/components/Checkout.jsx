@@ -1,169 +1,120 @@
-import React, { useState } from 'react'; 
+import React, { useState } from 'react';
 
 const Checkout = ({ cartItems, totalAmount, clearCart }) => {
-    const [paymentMethod, setPaymentMethod] = useState('');
-    const [phoneNumber, setPhoneNumber] = useState('');
-    const [bankDetails, setBankDetails] = useState({
-        cardNumber: '',
-        expiryDate: '',
-        cvv: ''
-    });
+  const [paymentMethod, setPaymentMethod] = useState(''); // Track selected payment method
+  const [phoneNumber, setPhoneNumber] = useState(''); // Track phone number for mobile payment
+  const [showForm, setShowForm] = useState(false); // Track whether to show the payment method form
 
-    const handlePayment = () => {
-        setTimeout(() => {
-            const paymentSuccess = Math.random() > 0.5;
-            if (paymentSuccess) {
-                alert('Payment Successful! A prompt message has been sent to you. Thank you for your purchase.');
-                clearCart();
-            } else {
-                alert('Payment Failed! Please try again.');
-            }
-        }, 1000);
-    };
+  // Handle payment method selection
+  const handlePaymentMethodChange = (e) => {
+    setPaymentMethod(e.target.value);
+    setShowForm(true);
+  };
 
-    const handleBankDetailsChange = (e) => {
-        const { name, value } = e.target;
-        setBankDetails(prevDetails => ({
-            ...prevDetails,
-            [name]: value
-        }));
-    };
+  // Handle form submission for payment
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-    const handlePhoneNumberChange = (e) => {
-        const value = e.target.value;
+    if (paymentMethod === 'card') {
+      // Simulate card payment process
+      alert('Payment successful with card! (This is a demo)');
+      clearCart(); // Clear cart after successful payment
+    } else if (paymentMethod === 'mobile') {
+      // Simulate mobile payment process
+      if (phoneNumber) {
+        alert(`A prompt has been sent to your phone number ${phoneNumber}. Please enter your PIN to complete the payment.`);
+        clearCart(); // Clear cart after successful payment
+      } else {
+        alert('Please enter a valid phone number.');
+      }
+    }
+  };
 
-        // Allow only integers and limit to 10 digits
-        if (/^\d{0,10}$/.test(value)) {
-            setPhoneNumber(value);
-        }
-    };
+  return (
+    <div className="checkout-form" style={{ textAlign: 'center', marginTop: '20px' }}>
+      <h2>Checkout</h2>
+      <p>Total Amount: ${totalAmount.toFixed(2)}</p>
+      <form onSubmit={handleSubmit}>
+        <h3>Payment Method</h3>
+        <label htmlFor="paymentMethod">Choose a payment method:</label>
+        <select
+          id="paymentMethod"
+          name="paymentMethod"
+          value={paymentMethod}
+          onChange={handlePaymentMethodChange}
+          required
+          style={{ margin: '10px 0', padding: '10px' }}
+        >
+          <option value="">Select a payment method</option>
+          <option value="card">Credit/Debit Card</option>
+          <option value="mobile">Mobile Pay</option>
+        </select>
 
-    const handleCardNumberChange = (e) => {
-        const value = e.target.value;
+        {/* Conditional rendering based on selected payment method */}
+        {showForm && (
+          paymentMethod === 'card' ? (
+            <>
+              <input
+                type="text"
+                name="name"
+                placeholder="Name on Card"
+                required
+                style={{ display: 'block', margin: '10px 0', padding: '10px' }}
+              />
+              <input
+                type="text"
+                name="cardNumber"
+                placeholder="Card Number"
+                required
+                style={{ display: 'block', margin: '10px 0', padding: '10px' }}
+              />
+              <input
+                type="text"
+                name="expiryDate"
+                placeholder="Expiry Date (MM/YY)"
+                required
+                style={{ display: 'block', margin: '10px 0', padding: '10px' }}
+              />
+              <input
+                type="text"
+                name="cvv"
+                placeholder="CVV"
+                required
+                style={{ display: 'block', margin: '10px 0', padding: '10px' }}
+              />
+            </>
+          ) : (
+            paymentMethod === 'mobile' && (
+              <>
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Name"
+                  required
+                  style={{ display: 'block', margin: '10px 0', padding: '10px' }}
+                />
+                <input
+                  type="tel"
+                  name="phoneNumber"
+                  placeholder="Enter Mobile Number"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  required
+                  style={{ display: 'block', margin: '10px 0', padding: '10px' }}
+                />
+              </>
+            )
+          )
+        )}
 
-        // Allow only integers
-        if (/^\d*$/.test(value)) {
-            setBankDetails(prevDetails => ({
-                ...prevDetails,
-                cardNumber: value
-            }));
-        }
-    };
-
-    const handleExpiryDateChange = (e) => {
-        const value = e.target.value;
-
-        // Allow only digits and '/' and limit to 5 characters (MM/YY)
-        if (/^(0[1-9]|1[0-2])?\/?\d{0,2}$/.test(value) || value === '') {
-            setBankDetails(prevDetails => ({
-                ...prevDetails,
-                expiryDate: value
-            }));
-        }
-    };
-
-    return (
-        <div style={{ textAlign: 'center', marginTop: '20px' }}>
-            <h2>Checkout</h2>
-            {cartItems.length === 0 ? (
-                <p>Your cart is empty</p>
-            ) : (
-                <>
-                    <h3>Total Amount: ${totalAmount.toFixed(2)}</h3>
-                    <div>
-                        <label>
-                            <input
-                                type="radio"
-                                value="mobileMoney"
-                                checked={paymentMethod === 'mobileMoney'}
-                                onChange={(e) => setPaymentMethod(e.target.value)}
-                            />
-                            Mobile Money
-                        </label>
-                        <br />
-                        <label>
-                            <input
-                                type="radio"
-                                value="bankCard"
-                                checked={paymentMethod === 'bankCard'}
-                                onChange={(e) => setPaymentMethod(e.target.value)}
-                            />
-                            Bank Card
-                        </label>
-                    </div>
-
-                    {paymentMethod && (
-                        <div style={{ marginTop: '20px' }}>
-                            <h4>Amount to be deducted: ${totalAmount.toFixed(2)}</h4>
-                        </div>
-                    )}
-
-                    {paymentMethod === 'mobileMoney' && (
-                        <div>
-                            <label>
-                                Phone Number:
-                                <input
-                                    type="tel"
-                                    value={phoneNumber}
-                                    onChange={handlePhoneNumberChange}
-                                    required
-                                />
-                            </label>
-                        </div>
-                    )}
-
-                    {paymentMethod === 'bankCard' && (
-                        <div>
-                            <label>
-                                Card Number:
-                                <input
-                                    type="text"
-                                    name="cardNumber"
-                                    value={bankDetails.cardNumber}
-                                    onChange={handleCardNumberChange}
-                                    required
-                                />
-                            </label>
-                            <br />
-                            <label>
-                                Expiry Date (MM/YY):
-                                <input
-                                    type="text"
-                                    name="expiryDate"
-                                    value={bankDetails.expiryDate}
-                                    onChange={handleExpiryDateChange}
-                                    required
-                                    maxLength={5} // Limit input to 5 characters
-                                />
-                            </label>
-                            <br />
-                            <label>
-                                CVV:
-                                <input
-                                    type="text"
-                                    name="cvv"
-                                    value={bankDetails.cvv}
-                                    onChange={handleBankDetailsChange}
-                                    required
-                                    maxLength={3} // Typically CVV is 3 digits
-                                />
-                            </label>
-                        </div>
-                    )}
-
-                    <button
-                        onClick={handlePayment}
-                        style={{ marginTop: '20px', padding: '10px 20px', backgroundColor: 'red', color: 'white', border: 'none', cursor: 'pointer' }}
-                        disabled={!paymentMethod}
-                    >
-                        Pay Now
-                    </button>
-                </>
-            )}
-        </div>
-    );
+        {showForm && (
+          <button type="submit" style={{ padding: '10px 20px', backgroundColor: 'red', color: 'white', border: 'none', cursor: 'pointer', marginTop: '20px' }}>
+            Pay Now
+          </button>
+        )}
+      </form>
+    </div>
+  );
 };
 
 export default Checkout;
-
-
