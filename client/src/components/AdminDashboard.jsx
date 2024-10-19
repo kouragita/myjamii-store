@@ -2,14 +2,22 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const AdminDashboard = () => {
-    const [product, setProduct] = useState({ id: '', name: '', price: '', description: '', stock: '', image_url: '', category_id: '' });
+    const [product, setProduct] = useState({
+        id: '',
+        name: '',
+        price: '',
+        description: '',
+        stock: '',
+        image_url: '',
+        category_id: ''
+    });
     const [products, setProducts] = useState([]);
-    const [categories, setCategories] = useState([]); // State for categories
-    const [newCategory, setNewCategory] = useState({ name: '', description: '' }); // State for new category
+    const [categories, setCategories] = useState([]);
+    const [newCategory, setNewCategory] = useState({ name: '', description: '' });
 
     useEffect(() => {
         fetchProducts();
-        fetchCategories(); // Fetch categories on component mount
+        fetchCategories();
     }, []);
 
     const fetchProducts = async () => {
@@ -35,35 +43,32 @@ const AdminDashboard = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (product.id) {
-            // Update existing product
             await axios.put(`http://localhost:5555/products/${product.id}`, product);
         } else {
-            // Create new product
             await axios.post('http://localhost:5555/products', product);
         }
-        setProduct({ id: '', name: '', price: '', description: '', stock: '', image_url: '', category_id: '' }); // Reset form
-        fetchProducts(); // Refresh product list
+        setProduct({ id: '', name: '', price: '', description: '', stock: '', image_url: '', category_id: '' });
+        fetchProducts();
     };
 
     const handleCategorySubmit = async (e) => {
         e.preventDefault();
         try {
-            // Optimistically update the categories state
             const newCategoryData = { name: newCategory.name, description: newCategory.description };
-            setCategories([...categories, newCategoryData]); // Add new category to the state
-
-            // Send request to create the category
-            const response = await axios.post('http://localhost:5555/categories', newCategory);
-            // Optionally, you can update the new category with the ID returned from the server
+            const response = await axios.post('http://localhost:5555/categories', newCategoryData);
             const createdCategory = response.data.category;
-            setCategories(categories.map(cat => cat.name === newCategory.name ? createdCategory : cat)); // Update with ID
 
-            // Reset category form
+            // Update the categories state
+            setCategories([...categories, createdCategory]);
+
+            // Reset the newCategory state to clear input fields
             setNewCategory({ name: '', description: '' });
         } catch (error) {
             console.error('Error creating category:', error);
-            // Optionally, you can handle errors and revert the optimistic update
-            fetchCategories(); // Re-fetch categories if there's an error
+            fetchCategories();
+            
+            // Reset the newCategory state even on error
+            setNewCategory({ name: '', description: '' });
         }
     };
 
@@ -73,117 +78,194 @@ const AdminDashboard = () => {
 
     const handleDelete = async (id) => {
         await axios.delete(`http://localhost:5555/products/${id}`);
-        fetchProducts(); // Refresh product list
+        fetchProducts();
     };
 
     return (
-        <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-            <h1 style={{ color: '#333' }}>Admin Dashboard</h1>
-            <h2 style={{ color: '#333' }}>Manage Products</h2>
-            <form onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
-                <input
-                    type="text"
-                    name="name"
-                    placeholder="Product Name"
-                    value={product.name}
-                    onChange={handleChange}
-                    required
-                    style={{ marginRight: '10px', padding: '5px', border: '1px solid #ccc', borderRadius: '4px' }}
-                />
-                <input
-                    type="number"
-                    name="price"
-                    placeholder="Product Price"
-                    value={product.price}
-                    onChange={handleChange}
-                    required
-                    style={{ marginRight: '10px', padding: '5 px', border: '1px solid #ccc', borderRadius: '4px' }}
-                />
-                <input
-                    type="text"
-                    name="description"
-                    placeholder="Product Description"
-                    value={product.description}
-                    onChange={handleChange}
-                    style={{ marginRight: '10px', padding: '5px', border: '1px solid #ccc', borderRadius: '4px' }}
-                />
-                <input
-                    type="number"
-                    name="stock"
-                    placeholder="Stock Quantity"
-                    value={product.stock}
-                    onChange={handleChange}
-                    required
-                    style={{ marginRight: '10px', padding: '5px', border: '1px solid #ccc', borderRadius: '4px' }}
-                />
-                <input
-                    type="text"
-                    name="image_url"
-                    placeholder="Image URL"
-                    value={product.image_url}
-                    onChange={handleChange}
-                    style={{ marginRight: '10px', padding: '5px', border: '1px solid #ccc', borderRadius: '4px' }}
-                />
-                <select
-                    name="category_id"
-                    value={product.category_id}
-                    onChange={handleChange}
-                    required
-                    style={{ marginRight: '10px', padding: '5px', border: '1px solid #ccc', borderRadius: '4px' }}
-                >
-                    <option value="">Select Category</option>
-                    {categories.map((category) => (
-                        <option key={category.id} value={category.id}>
-                            {category.name}
-                        </option>
-                    ))}
-                </select>
-                <button type="submit" style={{ padding: '5px 10px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-                    {product.id ? 'Update Product' : 'Add Product'}
-                </button>
-            </form>
+        <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', marginTop: '100px' }}>
+            <h1 style={{ color: '#333', marginBottom: '20px', textAlign: 'center', width: '100%' }}>Admin Dashboard</h1>
+            
+            <div style={{ display: 'flex', gap: '20px', marginBottom: '40px' }}>
+                <div style={{ flex: 1 }}>
+                    <h2 style={{ color: '#333' }}>Manage Products</h2>
+                    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        <input
+                            type="text"
+                            name="name"
+                            placeholder="Product Name"
+                            value={product.name}
+                            onChange={handleChange}
+                            required
+                            style={inputStyle}
+                        />
+                        <input
+                            type="number"
+                            name="price"
+                            placeholder="Product Price"
+                            value={product.price}
+                            onChange={handleChange}
+                            required
+                            style={inputStyle}
+                        />
+                        <input
+                            type="text"
+                            name="description"
+                            placeholder="Product Description"
+                            value={product.description}
+                            onChange={handleChange}
+                            style={inputStyle}
+                        />
+                        <input
+                            type="number"
+                            name="stock"
+                            placeholder="Stock Quantity"
+                            value={product.stock}
+                            onChange={handleChange}
+                            required
+                            style={inputStyle}
+                        />
+                        <input
+                            type="text"
+                            name="image_url"
+                            placeholder="Image URL"
+                            value={product.image_url}
+                            onChange={handleChange}
+                            style={inputStyle}
+                        />
+                        <select
+                            name="category_id"
+                            value={product.category_id}
+                            onChange={handleChange}
+                            required
+                            style={inputStyle}
+                        >
+                            <option value="">Select Category</option>
+                            {categories.map((category) => (
+                                <option key={category.id} value={category.id}>
+                                    {category.name}
+                                </option>
+                            ))}
+                        </select>
+                        <button type="submit" style={buttonStyle}>
+                            {product.id ? 'Update Product' : 'Add Product'}
+                        </button>
+                    </form>
+                </div>
 
-            <h2 style={{ color: '#333' }}>Create New Category</h2>
-            <form onSubmit={handleCategorySubmit} style={{ marginBottom: '20px' }}>
-                <input
-                    type="text"
-                    name="name"
-                    placeholder="Category Name"
-                    value={newCategory.name}
-                    onChange={handleCategoryChange}
-                    required
-                    style={{ marginRight: '10px', padding: '5px', border: '1px solid #ccc', borderRadius: '4px' }}
-                />
-                <textarea
-                    name="description"
-                    placeholder="Category Description"
-                    value={newCategory.description}
-                    onChange={handleCategoryChange}
-                    style={{ marginRight: '10px', padding: '5px', border: '1px solid #ccc', borderRadius: '4px' }}
-                />
-                <button type="submit" style={{ padding: '5px 10px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-                    Create Category
-                </button>
-            </form>
+                <div style={{ flex: 1 }}>
+                    <h2 style={{ color: '#333' }}>Create New Category</h2>
+                    <form onSubmit={handleCategorySubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        <input
+                            type="text"
+                            name="name"
+                            placeholder="Category Name"
+                            value={newCategory.name}
+                            onChange={handleCategoryChange}
+                            required
+                            style={inputStyle}
+                        />
+                        <textarea
+                            name="description"
+                            placeholder="Category Description"
+                            value={newCategory.description}
+                            onChange={handleCategoryChange}
+                            style={inputStyle}
+                        />
+                        <button type="submit" style={buttonStyle}>
+                            Create Category
+                        </button>
+                    </form>
+                </div>
+            </div>
 
             <h3 style={{ color: '#333' }}>Product List</h3>
-            <ul style={{ listStyleType: 'none', padding: 0 }}>
-                {products.map((p) => (
-                    <li key={p.id} style={{ marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        {p.name} - ${p.price} (Stock: {p.stock})
-                        <div>
-                            <button onClick={() => handleEdit(p)} style={{ marginLeft: '5px', padding: '5px 10px', backgroundColor: '#007bff', color: '#fff', border: 'none ', borderRadius: '4px', cursor: 'pointer' }}>
-                                Edit
-                            </button>
-                            <button onClick={() => handleDelete(p.id)} style={{ marginLeft: '5px', padding: '5px 10px', backgroundColor: '#dc3545', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer'}}>
-                                Delete
-                            </button>
-                        </div>
-                    </li>
-                ))}
-            </ul>
+            <table style={tableStyle}>
+                <thead>
+                    <tr>
+                        <th style={thStyle}>Name</th>
+                        <th style={thStyle}>Price</th>
+                        <th style={thStyle}>Stock</th>
+                        <th style={thStyle}>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {products.map((p) => (
+                        <tr key={p.id}>
+                            <td style={tdStyle}>{p.name}</td>
+                            <td style={tdStyle}>${p.price}</td>
+                            <td style={tdStyle}>{p.stock}</td>
+                            <td style={tdStyle}>
+                                <button onClick={() => handleEdit(p)} style={editButtonStyle}>
+                                    Edit
+                                </button>
+                                <button onClick={() => handleDelete(p.id)} style={deleteButtonStyle}>
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
+};
+
+// Common styles for inputs and buttons
+const inputStyle = {
+    padding: '10px',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    width: '100%',
+    maxWidth: '400px',
+};
+
+const buttonStyle = {
+    padding: '10px 20px',
+    backgroundColor: '#28a745',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    maxWidth: '150px',
+};
+
+const editButtonStyle = {
+    marginLeft: '10px',
+    padding: '5px 10px',
+    backgroundColor: '#007bff',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+};
+
+const deleteButtonStyle = {
+    marginLeft: '10px',
+    padding: '5px 10px',
+    backgroundColor: '#dc3545',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+};
+
+const tableStyle = {
+    width: '100%',
+    borderCollapse: 'collapse',
+    marginBottom: '20px',
+};
+
+const thStyle = {
+    padding: '10px',
+    backgroundColor: '#333',
+    color: '#fff',
+    textAlign: 'left',
+};
+
+const tdStyle = {
+    padding: '10px',
+    border: '1px solid #ddd',
+    textAlign: 'left',
 };
 
 export default AdminDashboard;

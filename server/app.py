@@ -6,21 +6,16 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_cors import CORS
 from flask_migrate import Migrate
 
-# Initialize Flask app and extensions
 app = Flask(__name__)
 api = Api(app)
 CORS(app)
 
-# Configurations
-app.config['SECRET_KEY'] = 'your_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ecommerce.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Initialize database and migration
 migrate = Migrate(app, db)
 db.init_app(app)
 
-# Define API endpoints
 class UserLoginAPI(Resource):
     def post(self):
         parser = reqparse.RequestParser()
@@ -51,7 +46,7 @@ class UserSignupAPI(Resource):
             username=args['username'],
             email=args['email'],
             password=generate_password_hash(args['password']),
-            role='user'  # Default role
+            role='user'
         )
         db.session.add(user)
         db.session.commit()
@@ -63,10 +58,8 @@ class UserSignupAPI(Resource):
 class ProductAPI(Resource):
     def get(self, category_id=None):
         if category_id is None:
-            # Retrieve all products
             products = Product.query.all()
         else:
-            # Retrieve products by category
             category = Category.query.get(category_id)
             if category is None:
                 return jsonify({'error': 'Category not found'}), 404
@@ -90,7 +83,7 @@ class ProductAPI(Resource):
         parser.add_argument('price', type=float, required=True)
         parser.add_argument('stock', type=int, required=True)
         parser.add_argument('image_url', type=str)
-        parser.add_argument('category_id', type=int, required=True)  # New category_id argument
+        parser.add_argument('category_id', type=int, required=True)
         args = parser.parse_args()
 
         new_product = Product(
@@ -99,7 +92,7 @@ class ProductAPI(Resource):
             price=args['price'],
             stock=args['stock'],
             image_url=args.get('image_url'),
-            category_id=args['category_id']  # Set category_id
+            category_id=args['category_id']
         )
         db.session.add(new_product)
         db.session.commit()
@@ -115,7 +108,7 @@ class ProductAPI(Resource):
         parser.add_argument('price', type=float)
         parser.add_argument('stock', type=int)
         parser.add_argument('image_url', type=str)
-        parser.add_argument('category_id', type=int)  # New category_id argument
+        parser.add_argument('category_id', type=int)
         args = parser.parse_args()
 
         product = Product.query.get(product_id)
@@ -132,7 +125,7 @@ class ProductAPI(Resource):
             product.stock = args['stock']
         if args['image_url'] is not None:
             product.image_url = args['image_url']
-        if args['category_id'] is not None:  # Update category_id if provided
+        if args['category_id'] is not None:
             product.category_id = args['category_id']
 
         db.session.commit()
@@ -233,7 +226,6 @@ class CartAPI(Resource):
             return jsonify({'error': 'Item not found in cart'}), 404
         return jsonify({'error': 'Cart not found'}), 404
 
-# Route registration
 api.add_resource(UserLoginAPI, '/login')
 api.add_resource(UserSignupAPI, '/signup')
 api.add_resource(ProductAPI, '/products', '/products/<int:category_id>', '/products/<int:product_id>')

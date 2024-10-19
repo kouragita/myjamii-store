@@ -10,7 +10,7 @@ import Home from './components/Home';
 import AdminDashboard from './components/AdminDashboard';
 
 const App = () => {
-    const [user, setUser ] = useState(null);
+    const [user, setUser] = useState(null);
     const [cartItems, setCartItems] = useState([]);
     const navigate = useNavigate();
 
@@ -35,20 +35,22 @@ const App = () => {
     };
 
     const handleLogin = (userData) => {
-        setUser (userData);
+        setUser(userData);
         navigate('/');
     };
 
     const handleLogout = () => {
-        setUser (null);
+        setUser(null);
         setCartItems([]);
         navigate('/');
     };
 
     const handleSignup = (userData) => {
-        setUser (userData);
+        setUser(userData);
         navigate('/');
     };
+
+    const isLoggedIn = !!user; // Determine if the user is logged in
 
     return (
         <>
@@ -57,10 +59,19 @@ const App = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/products" element={<ProductList addToCart={addToCart} />} />
                 <Route path="/signup" element={<Signup onSignup={handleSignup} />} />
-                <Route path="/cart" element={<Cart userId={user ? user.id : null} cartItems={cartItems} removeFromCart={removeFromCart} />} />
+                <Route 
+                    path="/cart" 
+                    element={
+                        <Cart 
+                            cartItems={cartItems} 
+                            removeFromCart={removeFromCart} 
+                            isLoggedIn={isLoggedIn} // Pass the isLoggedIn prop
+                        />
+                    } 
+                />
                 <Route path="/about" element={<About />} />
                 <Route path="/login" element={<Login onLogin={handleLogin} />} />
-                {user && user.role === 'admin' && ( // Only show Admin Dashboard route if user is admin
+                {user && user.role === 'admin' && (
                     <Route path="/admin-dashboard" element={<AdminDashboard />} />
                 )}
             </Routes>
