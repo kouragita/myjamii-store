@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';  // Assuming you're using React Router for navigation
 
 const Signup = ({ onSignup }) => {
     const [username, setUsername] = useState('');
@@ -111,6 +112,14 @@ const Signup = ({ onSignup }) => {
             >
                 Signup
             </button>
+
+            {/* Link to Login */}
+            <p style={{ marginTop: '20px' }}>
+                Already have an account?{' '}
+                <Link to="/login" style={{ color: '#333', textDecoration: 'underline' }}>
+                    Log in
+                </Link>
+            </p>
         </div>
     );
 };
