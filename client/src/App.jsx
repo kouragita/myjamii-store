@@ -35,18 +35,18 @@ const App = () => {
 
     const handleLogin = (userData) => {
         setUser (userData);
-        navigate('/products');
+        navigate('/');
     };
 
     const handleLogout = () => {
         setUser (null);
         setCartItems([]);
-        navigate('/products');
+        navigate('/');
     };
 
     const handleSignup = (userData) => {
         setUser (userData);
-        navigate('/products');
+        navigate('/');
     };
 
     return (
