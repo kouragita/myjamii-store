@@ -26,6 +26,11 @@ const Navbar = ({ onLogout, user }) => { // Accept user as a prop
                         <FaShoppingCart size={20} />
                     </Link>
                 </li>
+                {user && user.role === 'admin' && ( // Show Admin Dashboard link if user is admin
+                    <li style={styles.navItem}>
+                        <Link to="/admin-dashboard" style={styles.link}>Admin Dashboard</Link>
+                    </li>
+                )}
                 <li style={styles.navItem}>
                     {user ? (
                         <div>

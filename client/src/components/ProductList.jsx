@@ -4,22 +4,7 @@ import CategoryFilter from './CategoryFilter';
 
 const ProductList = ({ addToCart }) => {
     const [products, setProducts] = useState([]);
-    const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('');
-
-    // Fetch categories on component mount
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const response = await axios.get('http://localhost:5555/categories');
-                setCategories(response.data.categories);
-            } catch (error) {
-                console.error('Error fetching categories:', error);
-            }
-        };
-
-        fetchCategories();
-    }, []);
 
     // Fetch products when the selected category changes
     useEffect(() => {
@@ -43,8 +28,6 @@ const ProductList = ({ addToCart }) => {
                 onCategoryChange={setSelectedCategory} 
                 selectedCategory={selectedCategory} 
             />
-
-            
 
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
                 {products.length > 0 ? (
