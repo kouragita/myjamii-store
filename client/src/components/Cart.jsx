@@ -1,57 +1,118 @@
 import React, { useState } from 'react'; 
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import Checkout from './Checkout';
 
-const Cart = ({ cartItems, addToCart, removeFromCart }) => {
+const Cart = ({ cartItems, addToCart, removeFromCart, isLoggedIn }) => {
     const [isCheckoutVisible, setCheckoutVisible] = useState(false);
+    const navigate = useNavigate(); // Create navigate instance
 
     const handleAddToCart = (item) => {
-        const existingItem = cartItems.find(cartItem => cartItem.id === item.id); // Use 'id' here
+        const existingItem = cartItems.find(cartItem => cartItem.id === item.id);
         if (existingItem) {
-            // If the item already exists in the cart, increase its quantity
             existingItem.quantity += 1;
         } else {
-            // If the item does not exist, add it to the cart with quantity 1
             addToCart({ ...item, quantity: 1 });
         }
     };
 
+    const handleProceedToCheckout = () => {
+        if (isLoggedIn) {
+            setCheckoutVisible(true);
+        } else {
+            alert("Please log in to proceed to checkout.");
+            navigate('/login'); // Redirect to the login page
+        }
+    };
+
     return (
-        <div style={{ textAlign: 'center', marginTop: '20px' }}>
-            <h2>Cart</h2>
+        <div style={styles.container}>
+            <h2 style={styles.title}>Cart</h2>
             {cartItems.length === 0 ? (
                 <p>Your cart is empty</p>
             ) : (
                 <>
-                    <ul style={{ listStyleType: 'none', padding: 0 }}>
+                    <ul style={styles.itemList}>
                         {cartItems.map((item, index) => (
-                            <li key={index} style={{ margin: '10px 0', borderBottom: '1px solid #ccc', paddingBottom: '10px' }}>
-                                <div>
+                            <li key={index} style={styles.item}>
+                                <div style={styles.itemDetails}>
                                     <strong>{item.name}</strong> - ${item.price}
                                 </div>
-                                <div>
-                                    Quantity: {item.quantity}
-                                </div>
+                                <div>Quantity: {item.quantity}</div>
                                 <button 
-                                    onClick={() => removeFromCart(item.id)} // Use item.id here
-                                    style={{ marginLeft: '10px', padding: '5px 10px', backgroundColor: 'red', color: 'white', border: 'none', cursor: 'pointer' }}>
+                                    onClick={() => removeFromCart(item.id)} 
+                                    style={styles.removeButton}>
                                     Remove
                                 </button>
                             </li>
                         ))}
                     </ul>
                     <button
-                        onClick={() => setCheckoutVisible(true)}
-                        style={{ marginTop: '20px', padding: '10px 20px', backgroundColor: 'red', color: 'white', border: 'none', cursor: 'pointer' }}
+                        onClick={handleProceedToCheckout}
+                        style={styles.checkoutButton}
                     >
                         Proceed to Checkout
                     </button>
                     {isCheckoutVisible && (
-                        <Checkout cartItems={cartItems} totalAmount={cartItems.reduce((total, item) => total + item.price * item.quantity, 0)} clearCart={() => {}} />
+                        <Checkout 
+                            cartItems={cartItems} 
+                            totalAmount={cartItems.reduce((total, item) => total + item.price * item.quantity, 0)} 
+                            clearCart={() => {}} 
+                        />
                     )}
                 </>
             )}
         </div>
     );
+};
+
+const styles = {
+    container: {
+        textAlign: 'left',
+        margin: '100px auto 20px',
+        maxWidth: '600px',
+        padding: '20px',
+        borderRadius: '10px',
+        backgroundColor: '#f9f9f9',
+        boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+    },
+    title: {
+        textAlign: 'center',
+    },
+    itemList: {
+        listStyleType: 'none',
+        padding: 0,
+        width: '100%',
+    },
+    item: {
+        margin: '10px 0',
+        borderBottom: '1px solid #ccc',
+        paddingBottom: '10px',
+        width: '100%',
+    },
+    itemDetails: {
+        marginBottom: '5px',
+    },
+    removeButton: {
+        marginLeft: '10px',
+        padding: '5px 10px',
+        backgroundColor: 'black',
+        color: 'white',
+        border: 'none',
+        cursor: 'pointer',
+    },
+    checkoutButton: {
+        marginTop: '20px',
+        padding: '10px 20px',
+        backgroundColor: 'black',
+        color: 'white',
+        border: 'none',
+        cursor: 'pointer',
+        width: '100%',
+        borderRadius: '5px',
+    },
 };
 
 export default Cart;

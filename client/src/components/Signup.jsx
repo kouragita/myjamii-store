@@ -19,7 +19,6 @@ const Signup = ({ onSignup }) => {
             const response = await axios.post('http://localhost:5555/signup', { username, email, password });
             setSuccess(response.data.message);
             onSignup(response.data);
-            // Optionally reset the form fields
             setUsername('');
             setEmail('');
             setPassword('');
@@ -30,8 +29,16 @@ const Signup = ({ onSignup }) => {
     };
 
     return (
-        <div style={{ textAlign: 'center', marginTop: '50px' }}>
-            <h2>Signup</h2>
+        <div style={{ 
+            background: '#f9f9f9', 
+            padding: '30px', 
+            borderRadius: '10px', 
+            boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', 
+            width: '300px', 
+            margin: '150px auto',
+            textAlign: 'center' 
+        }}>
+            <h2 style={{ marginBottom: '20px' }}>Sign Up</h2>
             {error && <p style={{ color: 'red' }}>{error}</p>}
             {success && <p style={{ color: 'green' }}>{success}</p>}
             <input
@@ -39,7 +46,13 @@ const Signup = ({ onSignup }) => {
                 placeholder="Username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                style={{ margin: '10px', padding: '10px' }}
+                style={{
+                    width: '100%',
+                    padding: '10px',
+                    margin: '10px 0',
+                    border: '1px solid #ccc',
+                    borderRadius: '5px'
+                }}
                 required
             />
             <input
@@ -47,7 +60,13 @@ const Signup = ({ onSignup }) => {
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                style={{ margin: '10px', padding: '10px' }}
+                style={{
+                    width: '100%',
+                    padding: '10px',
+                    margin: '10px 0',
+                    border: '1px solid #ccc',
+                    borderRadius: '5px'
+                }}
                 required
             />
             <input
@@ -55,7 +74,13 @@ const Signup = ({ onSignup }) => {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                style={{ margin: '10px', padding: '10px' }}
+                style={{
+                    width: '100%',
+                    padding: '10px',
+                    margin: '10px 0',
+                    border: '1px solid #ccc',
+                    borderRadius: '5px'
+                }}
                 required
             />
             <input
@@ -63,10 +88,29 @@ const Signup = ({ onSignup }) => {
                 placeholder="Confirm Password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                style={{ margin: '10px', padding: '10px' }}
+                style={{
+                    width: '100%',
+                    padding: '10px',
+                    margin: '10px 0',
+                    border: '1px solid #ccc',
+                    borderRadius: '5px'
+                }}
                 required
             />
-            <button onClick={handleSignup} style={{ padding: '10px 20px' }}>Signup</button>
+            <button 
+                onClick={handleSignup} 
+                style={{
+                    width: '100%',
+                    padding: '10px',
+                    backgroundColor: '#333',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '5px',
+                    cursor: 'pointer'
+                }}
+            >
+                Signup
+            </button>
         </div>
     );
 };

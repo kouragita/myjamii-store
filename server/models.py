@@ -11,7 +11,7 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
-    role = db.Column(db.String(20), default='user')  # New role column
+    role = db.Column(db.String(20), default='user')
     carts = db.relationship('Cart', backref='user', lazy=True)
 
     def __repr__(self):
@@ -26,8 +26,8 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable=False)
     stock = db.Column(db.Integer, nullable=False)
     image_url = db.Column(db.String(255), nullable=True)
-    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=False)  # New category_id field
-    category = db.relationship('Category', backref='products')  # Relationship with Category
+    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=False)
+    category = db.relationship('Category', backref='products')
 
     def __repr__(self):
         return f"<Product {self.name}>"
