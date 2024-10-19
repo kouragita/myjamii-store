@@ -2,8 +2,6 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 
-
-
 db = SQLAlchemy()
 
 class User(db.Model):
@@ -13,10 +11,11 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
+    role = db.Column(db.String(20), default='user')  # New role column
     carts = db.relationship('Cart', backref='user', lazy=True)
 
     def __repr__(self):
-        return f"<User  {self.username}>"
+        return f"<User  {self.username}, Role {self.role}>"
 
 class Product(db.Model):
     __tablename__ = 'products'
@@ -27,8 +26,8 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable=False)
     stock = db.Column(db.Integer, nullable=False)
     image_url = db.Column(db.String(255), nullable=True)
-    categories = db.relationship('Category', secondary='product_categories', lazy='subquery',
-                                  backref=db.backref('products', lazy=True))
+    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=False)  # New category_id field
+    category = db.relationship('Category', backref='products')  # Relationship with Category
 
     def __repr__(self):
         return f"<Product {self.name}>"
@@ -74,4 +73,4 @@ class ProductCategory(db.Model):
     category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=False)
 
     def __repr__(self):
-        return f"<ProductCategory product_id={self.product_id}, category_id={self.category_id}>"
+        return f"<ProductCategory product_id={self.product_id}, category_id={self.category_id}"
