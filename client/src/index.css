@@ -1,0 +1,126 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* Ensure the body takes full height and sets a default font */
+  html, body {
+    height: 100%;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    font-size: 16px;
+  }
+  
+  /* Full-width and height elements will respond to device size */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Responsive containers for page content */
+  .container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #333;
+    color: white;
+    border: none;
+    transition: background-color 0.3s;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th, td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ccc;
+  }
+  
+  th {
+    background-color: #333;
+    color: white;
+  }
+  
+  td {
+    background-color: #f9f9f9;
+  }
+
+/* @media (max-width: 768px) {
+  h1 {
+    font-size: 2rem;
+  }
+
+  .container {
+    padding: 0 15px;
+  }
+
+  button {
+    width: 100%; */
+  /* }
+  .navContent {
+    flex-direction: column;
+    align-items: flex-start; */
+  /* }
+
+  .navLinks {
+    flex-direction: column;
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .navItem {
+    margin: 10px 0;
+  }
+} */
+
+/* @media (max-width: 600px) {
+    h1 {
+      font-size: 1.8rem;
+    }
+  
+    .container {
+      padding: 0 10px;
+    }
+  
+    table th, table td {
+      font-size: 0.9rem;
+    }
+  
+    input, select, textarea, button {
+      font-size: 0.9rem;
+    }
+  
+    .navLinks {
+      flex-direction: column;
+    }
+  
+    .navItem {
+      margin-bottom: 10px;
+    }
+  
+    button {
+      width: 100%;
+      padding: 12px;
+    }
+  } */

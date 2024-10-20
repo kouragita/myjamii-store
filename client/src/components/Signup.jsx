@@ -116,7 +116,7 @@ const Signup = ({ onSignup }) => {
             {/* Link to Login */}
             <p style={{ marginTop: '20px' }}>
                 Already have an account?{' '}
-                <Link to="/login" style={{ color: '#333', textDecoration: 'underline' }}>
+                <Link to="/login" style={{ color: '#007bff', textDecoration: 'none' }}>
                     Log in
                 </Link>
             </p>

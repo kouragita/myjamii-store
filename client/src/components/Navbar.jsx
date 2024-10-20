@@ -7,7 +7,7 @@ const Navbar = ({ onLogout, user }) => {
         <nav style={styles.navbar}>
             <div style={styles.navContent}>
                 <div style={styles.logo}>
-                    <h1>Myjamii</h1>
+                    <h1>Myjamii Stores</h1>
                 </div>
                 <ul style={styles.navLinks}>
                     <li style={styles.navItem}>

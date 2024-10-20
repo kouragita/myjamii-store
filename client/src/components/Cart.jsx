@@ -2,18 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import Checkout from './Checkout';
 
-const Cart = ({ cartItems, addToCart, removeFromCart, isLoggedIn }) => {
+const Cart = ({ cartItems, removeFromCart, isLoggedIn }) => {
     const [isCheckoutVisible, setCheckoutVisible] = useState(false);
     const navigate = useNavigate(); // Create navigate instance
-
-    const handleAddToCart = (item) => {
-        const existingItem = cartItems.find(cartItem => cartItem.id === item.id);
-        if (existingItem) {
-            existingItem.quantity += 1;
-        } else {
-            addToCart({ ...item, quantity: 1 });
-        }
-    };
 
     const handleProceedToCheckout = () => {
         if (isLoggedIn) {
@@ -68,7 +59,7 @@ const Cart = ({ cartItems, addToCart, removeFromCart, isLoggedIn }) => {
 const styles = {
     container: {
         textAlign: 'left',
-        margin: '100px auto 20px',
+        margin: '50px auto 20px',
         maxWidth: '600px',
         padding: '20px',
         borderRadius: '10px',
