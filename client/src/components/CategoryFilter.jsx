@@ -23,7 +23,10 @@ const CategoryFilter = ({ onCategoryChange, selectedCategory }) => {
         padding: '15px',
         backgroundColor: '#fff',
         borderRadius: '8px',
-        boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)'
+        boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+        position: 'sticky',  // Makes it sticky
+        top: '0px',  // Sticks at the top when scrolling
+        // zIndex: '1000',
       }}
     >
       <h3
