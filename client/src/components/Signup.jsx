@@ -17,7 +17,7 @@ const Signup = ({ onSignup }) => {
         }
 
         try {
-            const response = await axios.post('http://localhost:5555/signup', { username, email, password });
+            const response = await axios.post('https://myjamii-store.onrender.com/signup', { username, email, password });
             setSuccess(response.data.message);
             onSignup(response.data);
             setUsername('');

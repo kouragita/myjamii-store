@@ -9,7 +9,7 @@ const ProductList = ({ addToCart }) => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await axios.get(`http://localhost:5555/products${selectedCategory ? `/${selectedCategory}` : ''}`);
+                const response = await axios.get(`https://myjamii-store.onrender.com/products${selectedCategory ? `/${selectedCategory}` : ''}`);
                 setProducts(response.data.products);
             } catch (error) {
                 console.error('Error fetching products:', error);

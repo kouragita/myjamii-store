@@ -21,12 +21,12 @@ const AdminDashboard = () => {
     }, []);
 
     const fetchProducts = async () => {
-        const response = await axios.get('http://localhost:5555/products');
+        const response = await axios.get('https://myjamii-store.onrender.com/products');
         setProducts(response.data.products);
     };
 
     const fetchCategories = async () => {
-        const response = await axios.get('http://localhost:5555/categories');
+        const response = await axios.get('https://myjamii-store.onrender.com/categories');
         setCategories(response.data.categories);
     };
 
@@ -43,9 +43,9 @@ const AdminDashboard = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (product.id) {
-            await axios.put(`http://localhost:5555/products/${product.id}`, product);
+            await axios.put(`https://myjamii-store.onrender.com/products/${product.id}`, product);
         } else {
-            await axios.post('http://localhost:5555/products', product);
+            await axios.post('https://myjamii-store.onrender.com/products', product);
         }
         setProduct({ id: '', name: '', price: '', description: '', stock: '', image_url: '', category_id: '' });
         fetchProducts();
@@ -55,7 +55,7 @@ const AdminDashboard = () => {
         e.preventDefault();
         try {
             const newCategoryData = { name: newCategory.name, description: newCategory.description };
-            const response = await axios.post('http://localhost:5555/categories', newCategoryData);
+            const response = await axios.post('https://myjamii-store.onrender.com/categories', newCategoryData);
             const createdCategory = response.data.category;
 
             // Update the categories state
@@ -77,7 +77,7 @@ const AdminDashboard = () => {
     };
 
     const handleDelete = async (id) => {
-        await axios.delete(`http://localhost:5555/products/${id}`);
+        await axios.delete(`https://myjamii-store.onrender.com/products/${id}`);
         fetchProducts();
     };
 

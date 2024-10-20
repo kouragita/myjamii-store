@@ -10,7 +10,7 @@ const Login = ({ onLogin }) => {
 
     const handleLogin = async () => {
         try {
-            const response = await axios.post('http://127.0.0.1:5555/login', { username, password });
+            const response = await axios.post('https://myjamii-store.onrender.com/login', { username, password });
             onLogin(response.data.user);
 
             // Redirect based on user role

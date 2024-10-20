@@ -6,7 +6,7 @@ const CategoryFilter = ({ onCategoryChange, selectedCategory }) => {
 
   useEffect(() => {
     // Fetch categories from the backend
-    axios.get('http://localhost:5555/categories')
+    axios.get('https://myjamii-store.onrender.com/categories')
       .then((response) => {
         setCategories(response.data.categories);
       })
