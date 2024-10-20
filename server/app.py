@@ -5,6 +5,7 @@ from models import db, User, Product, Cart, CartItem, Category
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_cors import CORS
 from flask_migrate import Migrate
+import os
 
 app = Flask(__name__)
 api = Api(app)
