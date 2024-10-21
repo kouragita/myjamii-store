@@ -16,10 +16,10 @@ with app.app_context():
 
     users = [
         User(username="Daniel Watoro", email="watoro@example.com", password="password123", role='admin'),
-        User(username="Bakari Bubu", email="bubu@example.com", password="password456", role='user'),
-        User(username="David Wekesa", email="wekesa@example.com", password="password678", role='user'),
-        User(username="Favoured Mwange", email="mwange@example.com", password="password912", role='user'),
-        User(username="Wilson Mwangi", email="mwangi@example.com", password="password34343", role='user'),
+        User(username="Bakari Bubu", email="bubu@example.com", password="password456", role='admin'),
+        User(username="David Wekesa", email="wekesa@example.com", password="password678", role='admin'),
+        User(username="Favoured Mwange", email="mwange@example.com", password="password912", role='admin'),
+        User(username="Wilson Mwangi", email="mwangi@example.com", password="password34343", role='admin'),
         User(username="Alice Mwende", email="mwende@example.com", password="password111", role='user'),
         User(username="John Doe", email="john.doe@example.com", password="password222", role='user'),
         User(username="Jane Smith", email="jane.smith@example.com", password="password333", role='user'),
