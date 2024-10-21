@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import CategoryFilter from './CategoryFilter';
 
+
 const ProductList = ({ addToCart }) => {
     const [products, setProducts] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('');

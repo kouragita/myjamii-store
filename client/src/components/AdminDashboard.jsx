@@ -43,7 +43,7 @@ const AdminDashboard = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        // Validate required fields
+        
         if (!product.name || !product.price || !product.category_id) {
             console.error('Please fill in all required fields: Name, Price, and Category ID.');
             return;
