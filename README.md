@@ -50,7 +50,7 @@ myjamii-store/
 
 
 ```
-
+# FRONTEND CONFIGURATION
 ## Description
 
 - *App*: The main component that renders the overall layout of the application.
@@ -220,7 +220,13 @@ The Myjamii Store E-commerce App is a comprehensive online shopping platform wit
 7. Routing: Utilizes React Router for seamless navigation between different views.
 
 This application demonstrates a full-featured e-commerce solution, showcasing React's capabilities in building interactive and dynamic web applications.
+## Technologies Used
 
+- React.js
+- React Router for navigation
+- Axios for API requests
+- CSS for styling (with inline styles for components)
+- React Icons for UI icons
 ## Installation and Setup
 
 1. Clone the repository:
@@ -228,6 +234,10 @@ This application demonstrates a full-featured e-commerce solution, showcasing Re
 3. Install dependencies:
 4. Start the development server:
 5. Open http://localhost:3000 in your browser to view the application.
+
+## API Integration
+
+The application integrates with a backend API hosted at https://myjamii-store.onrender.com. Ensure the API is running and accessible for full functionality.
 
 ## Contributing
 
