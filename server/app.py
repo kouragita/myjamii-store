@@ -157,8 +157,13 @@ class StockReductionAPI(Resource):
             'product_id': product.id,
             'remaining_stock': product.stock
         })
+class CategoryAPI(Resource):
+    def get(self):
+        categories = Category.query.all()
+        output = [{'id': category.id, 'name': category.name} for category in categories]
+        return jsonify({'categories': output})
 
-
+api.add_resource(CategoryAPI, '/categories')
 api.add_resource(UserLoginAPI, '/login')
 api.add_resource(UserSignupAPI, '/signup')
 api.add_resource(ProductAPI, '/products', '/products/category/<int:category_id>', '/products/<int:product_id>')
