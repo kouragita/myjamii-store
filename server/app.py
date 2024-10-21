@@ -11,13 +11,12 @@ app = Flask(__name__)
 api = Api(app)
 CORS(app)
 
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ecommerce.db'
+# Database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://myjamiidbstore_user:PnIvvVqzb13BRbdZjAJ1LC9AuLMZLxpL@dpg-csb16sd6l47c73f5muig-a.oregon-postgres.render.com/myjamiidbstore'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 migrate = Migrate(app, db)
 db.init_app(app)
-
 
 class UserLoginAPI(Resource):
     def post(self):
@@ -33,7 +32,6 @@ class UserLoginAPI(Resource):
                 'user': {'id': user.id, 'username': user.username, 'role': user.role}
             })
         return jsonify({'error': 'Invalid username or password'}), 401
-
 
 class UserSignupAPI(Resource):
     def post(self):
@@ -58,7 +56,6 @@ class UserSignupAPI(Resource):
             'message': 'User  created successfully',
             'user': {'id': user.id, 'username': user.username, 'role': user.role}
         })
-
 
 class ProductAPI(Resource):
     def get(self, category_id=None):
@@ -93,7 +90,7 @@ class ProductAPI(Resource):
 
         new_product = Product(
             name=args['name'],
-            description =args.get('description'),
+            description=args.get('description'),
             price=args['price'],
             stock=args['stock'],
             image_url=args.get('image_url'),
@@ -110,7 +107,7 @@ class ProductAPI(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('name', type=str)
         parser.add_argument('description', type=str)
-        parser.add_argument('price ', type=float)
+        parser.add_argument('price', type=float)
         parser.add_argument('stock', type=int)
         parser.add_argument('image_url', type=str)
         parser.add_argument('category_id', type=int)
@@ -136,6 +133,15 @@ class ProductAPI(Resource):
         db.session.commit()
         return jsonify({'message': 'Product updated successfully'})
 
+    def delete(self, product_id):
+        product = Product.query.get(product_id)
+        if not product:
+            return jsonify({'error': 'Product not found'}), 404
+
+        db.session.delete(product)
+        db.session.commit()
+        return jsonify({'message': 'Product deleted successfully'})
+
 class StockReductionAPI(Resource):
     def post(self, product_id):
         parser = reqparse.RequestParser()
@@ -149,7 +155,6 @@ class StockReductionAPI(Resource):
         if product.stock < args['quantity']:
             return jsonify({'error': 'Not enough stock available'}), 400
 
-        
         product.stock -= args['quantity']
         db.session.commit()
         return jsonify({
@@ -157,13 +162,52 @@ class StockReductionAPI(Resource):
             'product_id': product.id,
             'remaining_stock': product.stock
         })
+
 class CategoryAPI(Resource):
     def get(self):
         categories = Category.query.all()
-        output = [{'id': category.id, 'name': category.name} for category in categories]
+        output = [{'id': category.id, 'name': category.name, 'description': category.description} for category in categories]
         return jsonify({'categories': output})
 
-api.add_resource(CategoryAPI, '/categories')
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('name', type=str, required=True)
+        parser.add_argument('description', type=str)
+        args = parser.parse_args()
+
+        new_category = Category(name=args['name'], description=args.get('description'))
+        db.session.add(new_category)
+        db.session.commit()
+        return jsonify({'message': 'Category created successfully', 'category': {'id': new_category.id, 'name': new_category.name}})
+
+    def put(self, category_id):
+        parser = reqparse.RequestParser()
+        parser.add_argument('name', type=str)
+        parser.add_argument('description', type=str)
+        args = parser.parse_args()
+
+        category = Category.query.get(category_id)
+        if not category:
+            return jsonify({'error': 'Category not found'}), 404
+
+        if args['name'] is not None:
+            category.name = args['name']
+        if args['description'] is not None:
+            category.description = args['description']
+
+        db.session.commit()
+        return jsonify({'message': 'Category updated successfully'})
+
+    def delete(self, category_id):
+        category = Category.query.get(category_id)
+        if not category:
+            return jsonify({'error': 'Category not found'}), 404
+
+        db.session.delete(category)
+        db.session.commit()
+        return jsonify({'message': 'Category deleted successfully'})
+
+api.add_resource(CategoryAPI, '/categories', '/categories/<int:category_id>')
 api.add_resource(UserLoginAPI, '/login')
 api.add_resource(UserSignupAPI, '/signup')
 api.add_resource(ProductAPI, '/products', '/products/category/<int:category_id>', '/products/<int:product_id>')
