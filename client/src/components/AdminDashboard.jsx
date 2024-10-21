@@ -42,13 +42,48 @@ const AdminDashboard = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (product.id) {
-            await axios.put(`https://myjamii-store.onrender.com/products/${product.id}`, product);
-        } else {
-            await axios.post('https://myjamii-store.onrender.com/products', product);
+        try {
+            if (product.id) {
+                // Update product
+                const response = await axios.put(`https://myjamii-store.onrender.com/products/${product.id}`, {
+                    name: product.name,
+                    price: product.price,
+                    description: product.description,
+                    stock: product.stock,
+                    image_url: product.image_url,
+                    category_id: product.category_id,
+                });
+
+                if (response.status === 200) {
+                    console.log('Product updated successfully');
+                } else {
+                    console.error('Error updating product: Unexpected response status', response.status);
+                    alert('An error occurred while updating the product. Please try again.');
+                }
+            } else {
+                // Create new product
+                const response = await axios.post('https://myjamii-store.onrender.com/products', {
+                    name: product.name,
+                    price: product.price,
+                    description: product.description,
+                    stock: product.stock,
+                    image_url: product.image_url,
+                    category_id: product.category_id,
+                });
+
+                if (response.status === 201) {
+                    console.log('Product created successfully');
+                } else {
+                    console.error('Error creating product: Unexpected response status', response.status);
+                    alert('An error occurred while creating the product. Please try again.');
+                }
+            }
+            setProduct({ id: '', name: '', price: '', description: '', stock: '', image_url: '', category_id: '' });
+            fetchProducts();
+        } catch (error) {
+            console.error('Error updating/adding product:', error);
+            alert('Error updating/adding product. Please try again.');
         }
-        setProduct({ id: '', name: '', price: '', description: '', stock: '', image_url: '', category_id: '' });
-        fetchProducts();
     };
 
     const handleCategorySubmit = async (e) => {
@@ -65,26 +100,49 @@ const AdminDashboard = () => {
             setNewCategory({ name: '', description: '' });
         } catch (error) {
             console.error('Error creating category:', error);
+            alert('Error creating category. Please try again.');
             fetchCategories();
-            
             // Reset the newCategory state even on error
             setNewCategory({ name: '', description: '' });
         }
     };
 
-    const handleEdit = (p) => {
-        setProduct(p);
+    const handleEdit = (product) => {
+        setProduct({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            description: product.description,
+            stock: product.stock,
+            image_url: product.image_url,
+            category_id: product.category_id,
+        });
     };
 
     const handleDelete = async (id) => {
-        await axios.delete(`https://myjamii-store.onrender.com/products/${id}`);
-        fetchProducts();
+        if (window.confirm("Are you sure you want to delete this product?")) {
+            try {
+                console.log(`Deleting product with id: ${id}`); // Debugging log
+                const response = await axios.delete(`https://myjamii-store.onrender.com/products/${id}`);
+                
+                if (response.status === 204) {
+                    console.log('Product deleted successfully');
+                    fetchProducts();
+                } else {
+                    console.error('Error deleting product: Unexpected response status', response.status);
+                    alert('An error occurred while deleting the product. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error deleting product:', error); // Detailed error log
+                alert('Error deleting product. Please try again.');
+            }
+        }
     };
 
     return (
         <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', marginTop: '100px' }}>
             <h1 style={{ color: '#333', marginBottom: '20px', textAlign: 'center', width: '100%' }}>Admin Dashboard</h1>
-            
+
             <div style={{ display: 'flex', gap: '20px', marginBottom: '40px' }}>
                 <div style={{ flex: 1 }}>
                     <h2 style={{ color: '#333' }}>Manage Products</h2>
@@ -210,7 +268,7 @@ const AdminDashboard = () => {
     );
 };
 
-// Common styles for inputs and buttons
+
 const inputStyle = {
     padding: '10px',
     border: '1px solid #ccc',
@@ -226,46 +284,44 @@ const buttonStyle = {
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',
-    maxWidth: '150px',
+    width: '150px',
 };
 
 const editButtonStyle = {
-    marginLeft: '10px',
-    padding: '5px 10px',
     backgroundColor: '#007bff',
     color: '#fff',
     border: 'none',
-    borderRadius: '4px',
+    padding: '5px 10px',
     cursor: 'pointer',
+    borderRadius: '3px',
+    marginRight: '5px',
 };
 
 const deleteButtonStyle = {
-    marginLeft: '10px',
-    padding: '5px 10px',
     backgroundColor: '#dc3545',
     color: '#fff',
     border: 'none',
-    borderRadius: '4px',
+    padding: '5px 10px',
     cursor: 'pointer',
+    borderRadius: '3px',
 };
 
 const tableStyle = {
     width: '100%',
     borderCollapse: 'collapse',
-    marginBottom: '20px',
 };
 
 const thStyle = {
-    padding: '10px',
-    backgroundColor: '#333',
-    color: '#fff',
+    borderBottom: '2px solid #ddd',
     textAlign: 'left',
+    padding: '8px',
+    backgroundColor: '#f2f2f2',
 };
 
 const tdStyle = {
-    padding: '10px',
-    border: '1px solid #ddd',
+    borderBottom: '1px solid #ddd',
     textAlign: 'left',
+    padding: '8px',
 };
 
 export default AdminDashboard;
