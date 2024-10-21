@@ -11,7 +11,7 @@ app = Flask(__name__)
 api = Api(app)
 CORS(app)
 
-# Database configuration
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://myjamiidbstore_user:PnIvvVqzb13BRbdZjAJ1LC9AuLMZLxpL@dpg-csb16sd6l47c73f5muig-a.oregon-postgres.render.com/myjamiidbstore'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -87,6 +87,10 @@ class ProductAPI(Resource):
         parser.add_argument('category_id', type=int, required=True)
         args = parser.parse_args()
 
+        
+        if not Category.query.get(args['category_id']):
+            return jsonify({'error': 'Category not found'}), 400
+
         new_product = Product(
             name=args['name'],
             description=args.get('description'),
@@ -95,12 +99,18 @@ class ProductAPI(Resource):
             image_url=args.get('image_url'),
             category_id=args['category_id']
         )
+
         db.session.add(new_product)
-        db.session.commit()
-        return jsonify({
-            'message': 'Product created successfully',
-            'product': {'id': new_product.id, 'name': new_product.name}
-        })
+        
+        try:
+            db.session.commit()
+            return jsonify({
+                'message': 'Product created successfully',
+                'product': {'id': new_product.id, 'name': new_product.name}
+            }), 201  
+        except Exception as e:
+            db.session.rollback()  
+            return jsonify({'error': str(e)}), 500  
     def put(self, product_id):
         parser = reqparse.RequestParser()
         parser.add_argument('name', type=str)
