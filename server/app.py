@@ -11,7 +11,6 @@ app = Flask(__name__)
 api = Api(app)
 CORS(app)
 
-
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://myjamiidbstore_user:PnIvvVqzb13BRbdZjAJ1LC9AuLMZLxpL@dpg-csb16sd6l47c73f5muig-a.oregon-postgres.render.com/myjamiidbstore'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-
 const CategoryFilter = ({ onCategoryChange, selectedCategory }) => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
