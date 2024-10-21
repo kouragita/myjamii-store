@@ -42,47 +42,46 @@ const AdminDashboard = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        // Validate required fields
+        if (!product.name || !product.price || !product.category_id) {
+            console.error('Please fill in all required fields: Name, Price, and Category ID.');
+            return;
+        }
+
+        const productData = {
+            name: product.name,
+            price: parseFloat(product.price),
+            description: product.description,
+            stock: parseInt(product.stock),
+            image_url: product.image_url,
+            category_id: parseInt(product.category_id),
+        };
+
         try {
             if (product.id) {
-                // Update product
-                const response = await axios.put(`https://myjamii-store.onrender.com/products/${product.id}`, {
-                    name: product.name,
-                    price: product.price,
-                    description: product.description,
-                    stock: product.stock,
-                    image_url: product.image_url,
-                    category_id: product.category_id,
-                });
-
+                // Update existing product
+                const response = await axios.put(`https://myjamii-store.onrender.com/products/${product.id}`, productData);
                 if (response.status === 200) {
                     console.log('Product updated successfully');
                 } else {
                     console.error('Error updating product: Unexpected response status', response.status);
-                    alert('An error occurred while updating the product. Please try again.');
                 }
             } else {
                 // Create new product
-                const response = await axios.post('https://myjamii-store.onrender.com/products', {
-                    name: product.name,
-                    price: product.price,
-                    description: product.description,
-                    stock: product.stock,
-                    image_url: product.image_url,
-                    category_id: product.category_id,
-                });
-
+                const response = await axios.post('https://myjamii-store.onrender.com/products', productData);
                 if (response.status === 201) {
                     console.log('Product created successfully');
                 } else {
                     console.error('Error creating product: Unexpected response status', response.status);
-                    alert('An error occurred while creating the product. Please try again.');
                 }
             }
+
+            // Reset product state after submission
             setProduct({ id: '', name: '', price: '', description: '', stock: '', image_url: '', category_id: '' });
-            fetchProducts();
+            fetchProducts(); // Refresh product list
         } catch (error) {
             console.error('Error updating/adding product:', error);
-            alert('Error updating/adding product. Please try again.');
         }
     };
 
@@ -93,16 +92,11 @@ const AdminDashboard = () => {
             const response = await axios.post('https://myjamii-store.onrender.com/categories', newCategoryData);
             const createdCategory = response.data.category;
 
-            // Update the categories state
             setCategories([...categories, createdCategory]);
-
-            // Reset the newCategory state to clear input fields
             setNewCategory({ name: '', description: '' });
         } catch (error) {
             console.error('Error creating category:', error);
-            alert('Error creating category. Please try again.');
             fetchCategories();
-            // Reset the newCategory state even on error
             setNewCategory({ name: '', description: '' });
         }
     };
@@ -122,7 +116,7 @@ const AdminDashboard = () => {
     const handleDelete = async (id) => {
         if (window.confirm("Are you sure you want to delete this product?")) {
             try {
-                console.log(`Deleting product with id: ${id}`); // Debugging log
+                console.log(`Deleting product with id: ${id}`); 
                 const response = await axios.delete(`https://myjamii-store.onrender.com/products/${id}`);
                 
                 if (response.status === 204) {
@@ -130,18 +124,16 @@ const AdminDashboard = () => {
                     fetchProducts();
                 } else {
                     console.error('Error deleting product: Unexpected response status', response.status);
-                    alert('An error occurred while deleting the product. Please try again.');
                 }
             } catch (error) {
-                console.error('Error deleting product:', error); // Detailed error log
-                alert('Error deleting product. Please try again.');
+                console.error('Error deleting product:', error);
             }
         }
     };
 
     return (
         <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', marginTop: '100px' }}>
-            <h1 style={{ color: '#333', marginBottom: '20px', textAlign: 'center', width: '100%' }}>Admin Dashboard</h1>
+            <h1 style ={{ color: '#333', marginBottom: '20px', textAlign: 'center', width: '100%' }}>Admin Dashboard</h1>
 
             <div style={{ display: 'flex', gap: '20px', marginBottom: '40px' }}>
                 <div style={{ flex: 1 }}>
@@ -267,7 +259,6 @@ const AdminDashboard = () => {
         </div>
     );
 };
-
 
 const inputStyle = {
     padding: '10px',
