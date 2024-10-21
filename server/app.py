@@ -77,7 +77,6 @@ class ProductAPI(Resource):
         } for product in products]
 
         return jsonify({'products': output})
-
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('name', type=str, required=True)
@@ -102,7 +101,6 @@ class ProductAPI(Resource):
             'message': 'Product created successfully',
             'product': {'id': new_product.id, 'name': new_product.name}
         })
-
     def put(self, product_id):
         parser = reqparse.RequestParser()
         parser.add_argument('name', type=str)
