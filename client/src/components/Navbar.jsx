@@ -7,7 +7,13 @@ const Navbar = ({ onLogout, user }) => {
         <nav style={styles.navbar}>
             <div style={styles.navContent}>
                 <div style={styles.logo}>
-                    <h1>Myjamii Stores</h1>
+                    {/* Add the logo image next to the Myjamii Stores text */}
+                    <img 
+                        src="https://cdn.dribbble.com/userupload/10056937/file/original-b185c3532b852114025434d4e2bd14dd.png?resize=1200x900" 
+                        alt="Myjamii Logo" 
+                        style={styles.logoImage}
+                    />
+                    <h1 style={styles.logoText}>Myjamii Stores</h1>
                 </div>
                 <ul style={styles.navLinks}>
                     <li style={styles.navItem}>
@@ -66,6 +72,16 @@ const styles = {
         alignItems: 'center',
     },
     logo: {
+        display: 'flex',
+        alignItems: 'center',
+    },
+    logoImage: {
+        width: '40px',  // Set the desired width of the logo image
+        height: '40px', // Set the desired height of the logo image
+        marginRight: '10px', // Space between the logo and the text
+        borderRadius: '50%', // Optional: make the image circular
+    },
+    logoText: {
         fontSize: '24px',
         color: '#fff',
         fontWeight: 'bold',

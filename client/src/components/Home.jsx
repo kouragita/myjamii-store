@@ -8,7 +8,8 @@ function HomePage() {
     <div style={styles.container}>
       <div style={styles.content}>
         <h1>Welcome to MyJamii Stores</h1>
-        <p>Discover amazing products at unbeatable prices. Shop now and enjoy free shipping on orders over $50!</p>
+        <p>We're excited to have you here! Explore our vast selection of unique products crafted just for you.<br></br> Whether you're looking for the latest trends, timeless classics, or special gifts, we have something for everyone.</p>
+        <p>Thank you for choosing us😊. Happy shopping!</p>
         <div style={styles.buttonContainer}>
           <button style={styles.button} onClick={() => navigate('/products')}>Shop Now</button>
           <button style={styles.button} onClick={() => navigate('/about')}>Learn More</button>

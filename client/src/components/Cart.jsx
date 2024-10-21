@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import Checkout from './Checkout';
 
-const Cart = ({ cartItems, removeFromCart, isLoggedIn }) => {
+const Cart = ({ cartItems, removeFromCart, clearCart, isLoggedIn }) => { // Added clearCart prop
     const [isCheckoutVisible, setCheckoutVisible] = useState(false);
     const navigate = useNavigate(); // Create navigate instance
 
@@ -43,11 +43,20 @@ const Cart = ({ cartItems, removeFromCart, isLoggedIn }) => {
                     >
                         Proceed to Checkout
                     </button>
+
+                    {/* Clear Cart Button */}
+                    <button
+                        onClick={clearCart} // Call clearCart function from props
+                        style={styles.clearCartButton}
+                    >
+                        Clear Cart
+                    </button>
+
                     {isCheckoutVisible && (
                         <Checkout 
                             cartItems={cartItems} 
                             totalAmount={cartItems.reduce((total, item) => total + item.price * item.quantity, 0)} 
-                            clearCart={() => {}} 
+                            clearCart={clearCart} 
                         />
                     )}
                 </>
@@ -98,6 +107,16 @@ const styles = {
         marginTop: '20px',
         padding: '10px 20px',
         backgroundColor: 'black',
+        color: 'white',
+        border: 'none',
+        cursor: 'pointer',
+        width: '100%',
+        borderRadius: '5px',
+    },
+    clearCartButton: {
+        marginTop: '10px',
+        padding: '10px 20px',
+        backgroundColor: 'red',
         color: 'white',
         border: 'none',
         cursor: 'pointer',
