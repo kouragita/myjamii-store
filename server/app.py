@@ -11,12 +11,12 @@ app = Flask(__name__)
 api = Api(app)
 CORS(app)
 
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ecommerce.db'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://myjamiistoredb_user:SiyUEiuKRYm76JSa8rTDgOh9mzQZkla6@dpg-csahb2l6l47c73f0j8j0-a.oregon-postgres.render.com/myjamiistoredb'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 migrate = Migrate(app, db)
 db.init_app(app)
+
 
 class UserLoginAPI(Resource):
     def post(self):
@@ -32,6 +32,7 @@ class UserLoginAPI(Resource):
                 'user': {'id': user.id, 'username': user.username, 'role': user.role}
             })
         return jsonify({'error': 'Invalid username or password'}), 401
+
 
 class UserSignupAPI(Resource):
     def post(self):
@@ -56,6 +57,7 @@ class UserSignupAPI(Resource):
             'message': 'User  created successfully',
             'user': {'id': user.id, 'username': user.username, 'role': user.role}
         })
+
 
 class ProductAPI(Resource):
     def get(self, category_id=None):
@@ -90,7 +92,7 @@ class ProductAPI(Resource):
 
         new_product = Product(
             name=args['name'],
-            description=args.get('description'),
+            description =args.get('description'),
             price=args['price'],
             stock=args['stock'],
             image_url=args.get('image_url'),
@@ -107,7 +109,7 @@ class ProductAPI(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('name', type=str)
         parser.add_argument('description', type=str)
-        parser.add_argument('price', type=float)
+        parser.add_argument('price ', type=float)
         parser.add_argument('stock', type=int)
         parser.add_argument('image_url', type=str)
         parser.add_argument('category_id', type=int)
@@ -133,108 +135,34 @@ class ProductAPI(Resource):
         db.session.commit()
         return jsonify({'message': 'Product updated successfully'})
 
-    def delete(self, product_id):
+class StockReductionAPI(Resource):
+    def post(self, product_id):
+        parser = reqparse.RequestParser()
+        parser.add_argument('quantity', type=int, required=True)
+        args = parser.parse_args()
+
         product = Product.query.get(product_id)
         if not product:
             return jsonify({'error': 'Product not found'}), 404
 
-        db.session.delete(product)
-        db.session.commit()
-        return jsonify({'message': 'Product deleted successfully'})
+        if product.stock < args['quantity']:
+            return jsonify({'error': 'Not enough stock available'}), 400
 
-class CategoryAPI(Resource):
-    def get(self):
-        categories = Category.query.all()
-        if not categories:
-            return jsonify({'message': 'No categories found'}), 404
-
-        output = [{
-            'id': category.id,
-            'name': category.name,
-            'description': category.description
-        } for category in categories]
-        return jsonify({'categories': output})
-
-    def post(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument('name', type=str, required=True)
-        parser.add_argument('description', type=str)
-        args = parser.parse_args()
-
-        new_category = Category(
-            name=args['name'],
-            description=args.get('description')
-        )
-        db.session.add(new_category)
+        
+        product.stock -= args['quantity']
         db.session.commit()
         return jsonify({
-            'message': 'Category created successfully',
-            'category': {'id': new_category.id, 'name': new_category.name}
-        }), 201
+            'message': 'Stock reduced successfully',
+            'product_id': product.id,
+            'remaining_stock': product.stock
+        })
 
-class CartAPI(Resource):
-    def get(self, user_id):
-        cart = Cart.query.filter_by(user_id=user_id).first()
-        if cart:
-            items = [{
-                'product_id': item.product_id,
-                'quantity': item.quantity
-            } for item in cart.items]
-            return jsonify({'items': items})
-        return jsonify({'error': 'Cart not found'}), 404
-
-    def post(self, user_id):
-        parser = reqparse.RequestParser()
-        parser.add_argument('product_id', type=int, required=True)
-        parser.add_argument('quantity', type=int, required=True)
-        args = parser.parse_args()
-
-        cart = Cart.query.filter_by(user_id=user_id).first()
-        if cart:
-            item = CartItem(cart_id=cart.id, product_id=args['product_id'], quantity=args['quantity'])
-            db.session.add(item)
-            db.session.commit()
-            return jsonify({'message': 'Item added to cart successfully'})
-        return jsonify({'error': 'Cart not found'}), 404
-
-    def put(self, user_id):
-        parser = reqparse.RequestParser()
-        parser.add_argument('product_id', type=int, required=True)
-        parser.add_argument('quantity', type=int, required=True)
-        args = parser.parse_args()
-
-        cart = Cart.query.filter_by(user_id=user_id).first()
-        if cart:
-            item = CartItem.query.filter_by(cart_id=cart.id, product_id=args['product_id']).first()
-            if item:
-                item.quantity = args['quantity']
-                db.session.commit()
-                return jsonify({'message': 'Item quantity updated successfully'})
-            return jsonify({'error': 'Item not found in cart'}), 404
-        return jsonify({'error': 'Cart not found'}), 404
-
-    def delete(self, user_id):
-        parser = reqparse.RequestParser()
-        parser.add_argument('product_id', type=int, required=True)
-        args = parser.parse_args()
-
-        cart = Cart.query.filter_by(user_id=user_id).first()
-        if cart:
-            item = CartItem.query.filter_by(cart_id=cart.id, product_id=args['product_id']).first()
-            if item:
-                db.session.delete(item)
-                db.session.commit()
-                return jsonify({'message': 'Item removed from cart successfully'})
-            return jsonify({'error': 'Item not found in cart'}), 404
-        return jsonify({'error': 'Cart not found'}), 404
 
 api.add_resource(UserLoginAPI, '/login')
 api.add_resource(UserSignupAPI, '/signup')
-api.add_resource(ProductAPI, '/products', '/products/<int:category_id>', '/products/<int:product_id>')
-api.add_resource(CartAPI, '/carts/<int:user_id>')
-api.add_resource(CategoryAPI, '/categories')
+api.add_resource(ProductAPI, '/products', '/products/category/<int:category_id>', '/products/<int:product_id>')
+api.add_resource(StockReductionAPI, '/products/<int:product_id>/reduce_stock')
 
-
-if __name__ == '_main_':
+if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5555))
     app.run(host="0.0.0.0", port=port, debug=True)
