@@ -253,7 +253,7 @@ Contributions to Myjamii Store are welcome! Please follow these steps:
 
 ### ERD DIAGRAM 
 
-[image](./images/image.jpg)
+[image](./images/image.png)
 
 ## RELATIONSHIP
   #### Database Schema
