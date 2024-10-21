@@ -7,6 +7,7 @@ const ProductList = ({ addToCart }) => {
     const [selectedCategory, setSelectedCategory] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [cartItems, setCartItems] = useState([]);  // Track cart items locally
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -30,6 +31,40 @@ const ProductList = ({ addToCart }) => {
 
         fetchProducts();
     }, [selectedCategory]);
+
+    // Function to handle adding products to the cart
+    const handleAddToCart = (product) => {
+        if (product.stock <= 0) {
+            alert("This product is out of stock!");
+            return;
+        }
+
+        // Add product to cartItems state and update cart total
+        setCartItems((prevItems) => {
+            const existingItem = prevItems.find(item => item.id === product.id);
+
+            if (existingItem) {
+                existingItem.quantity += 1;  // Increment the quantity if the product is already in the cart
+            } else {
+                prevItems.push({ ...product, quantity: 1 });  // Add new product to the cart with quantity 1
+            }
+
+            return [...prevItems];
+        });
+
+        // Call the provided addToCart function with the product details
+        addToCart({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            image_url: product.image_url
+        });
+
+        // Calculate the total cart value
+        const totalAmount = cartItems.reduce((total, item) => total + item.price * item.quantity, 0) + product.price;
+
+        alert(`${product.name} added to cart! \nCart total: $${totalAmount.toFixed(2)}`);
+    };
 
     return (
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
@@ -77,30 +112,44 @@ const ProductList = ({ addToCart }) => {
                                     <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#337ab7', marginBottom: '20px' }}>
                                         ${product.price}
                                     </p>
+                                    <p style={{ fontSize: '14px', color: product.stock > 0 ? '#28a745' : 'red' }}>
+                                        {product.stock > 0 ? `In Stock: ${product.stock}` : 'Out of Stock'}
+                                    </p>
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <button 
-                                        onClick={() => addToCart({ 
-                                            id: product.id, 
-                                            name: product.name, 
-                                            price: product.price, 
-                                            image_url: product.image_url 
-                                        })} 
-                                        style={{
-                                            backgroundColor: '#333',
-                                            color: '#fff',
-                                            border: 'none',
-                                            padding: '10px 20px',
-                                            fontSize: '16px',
-                                            cursor: 'pointer',
-                                            transition: 'background-color 0.2s ease'
-                                        }}
-                                        onMouseEnter={(e) => e.target.style.backgroundColor = '#444'}
-                                        onMouseLeave={(e) => e.target.style.backgroundColor = '#333'}
-                                    >
-                                        <i style={{ marginRight: '10px' }} className="fa fa-cart-plus"></i>
-                                        Add to Cart
-                                    </button>
+                                    {product.stock > 0 ? (
+                                        <button 
+                                            onClick={() => handleAddToCart(product)} 
+                                            style={{
+                                                backgroundColor: '#333',
+                                                color: '#fff',
+                                                border: 'none',
+                                                padding: '10px 20px',
+                                                fontSize: '16px',
+                                                cursor: 'pointer',
+                                                transition: 'background-color 0.2s ease'
+                                            }}
+                                            onMouseEnter={(e) => e.target.style.backgroundColor = '#444'}
+                                            onMouseLeave={(e) => e.target.style.backgroundColor = '#333'}
+                                        >
+                                            <i style={{ marginRight: '10px' }} className="fa fa-cart-plus"></i>
+                                            Add to Cart
+                                        </button>
+                                    ) : (
+                                        <button 
+                                            disabled 
+                                            style={{
+                                                backgroundColor: '#999',
+                                                color: '#fff',
+                                                border: 'none',
+                                                padding: '10px 20px',
+                                                fontSize: '16px',
+                                                cursor: 'not-allowed',
+                                            }}
+                                        >
+                                            Out of Stock
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         ))
