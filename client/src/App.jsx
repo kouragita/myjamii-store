@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';  // Import Footer component
 import Login from './components/Login';
 import Signup from './components/Signup';
 import ProductList from './components/ProductList';
@@ -34,6 +35,10 @@ const App = () => {
         );
     };
 
+    const clearCart = () => {
+        setCartItems([]); // Set cartItems to an empty array
+    };
+
     const handleLogin = (userData) => {
         setUser(userData);
         navigate('/');
@@ -65,7 +70,8 @@ const App = () => {
                         <Cart 
                             cartItems={cartItems} 
                             removeFromCart={removeFromCart} 
-                            isLoggedIn={isLoggedIn} // Pass the isLoggedIn prop
+                            clearCart={clearCart} 
+                            isLoggedIn={isLoggedIn} 
                         />
                     } 
                 />
@@ -75,6 +81,8 @@ const App = () => {
                     <Route path="/admin-dashboard" element={<AdminDashboard />} />
                 )}
             </Routes>
+            
+            <Footer />
         </>
     );
 };
