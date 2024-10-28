@@ -40,7 +40,7 @@ function HomePage() {
       </div>
       <div style={styles.content}>
         <p>We're excited to have you here! Explore our vast selection of unique products crafted just for you. Whether you're looking for the latest trends, timeless classics, or special gifts, we have something for everyone.</p>
-        <p>Thank you for choosing us 😊. Happy shopping!</p>
+        <p>Thank you for choosing us. Happy shopping!</p>
         <div style={styles.buttonContainer}>
           <button style={styles.button} onClick={() => navigate('/products')}>Shop Now</button>
           <button style={styles.button} onClick={() => navigate('/about')}>Learn More</button>

@@ -40,10 +40,10 @@ const Footer = () => {
                 <div style={columnStyle}>
                     <h3 style={columnHeaderStyle}>Get Our App</h3>
                     <a href="https://play.google.com/store/search?q=pubg&c=apps&hl=en" style={iconLinkStyle}>
-                        <FaApple style={iconStyle} /> App Store
+                        <FaApple style={iconStyle} /> App Store.
                     </a>
                     <a href="https://play.google.com/store/search?q=call+of+duty&c=apps&hl=en" style={iconLinkStyle}>
-                        <FaGooglePlay style={iconStyle} /> Play Store
+                        <FaGooglePlay style={iconStyle} /> Play Store.
                     </a>
                 </div>
             </div>

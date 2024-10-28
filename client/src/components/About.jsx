@@ -11,7 +11,7 @@ const About = () => {
         <div style={styles.section}>
           <p style={styles.description}>
             Welcome to our e-commerce platform, where we offer a wide range of products for all your needs.
-            Our mission is to provide <strong style={styles.highlight}>high-quality products</strong>, 
+            Our aim is to provide <strong style={styles.highlight}>high-quality products</strong>, 
             <strong style={styles.highlight}> excellent customer service</strong>, and a <strong style={styles.highlight}>seamless shopping experience</strong>.
           </p>
         </div>
