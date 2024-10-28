@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; 
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import Checkout from './Checkout';
 
@@ -17,46 +17,58 @@ const Cart = ({ cartItems, removeFromCart, clearCart, isLoggedIn }) => { // Adde
 
     return (
         <div style={styles.container}>
-            <h2 style={styles.title}>Cart</h2>
+            <h2 style={styles.title}>Shopping Cart</h2>
             {cartItems.length === 0 ? (
-                <p>Your cart is empty</p>
+                <p style={styles.emptyMessage}>Your cart is empty</p>
             ) : (
                 <>
                     <ul style={styles.itemList}>
                         {cartItems.map((item, index) => (
                             <li key={index} style={styles.item}>
                                 <div style={styles.itemDetails}>
-                                    <strong>{item.name}</strong> - ${item.price}
+                                    <img
+                                        src={item.image_url}
+                                        alt={item.name}
+                                        style={styles.productImage}
+                                    />
+                                    <div style={styles.productInfo}>
+                                        <strong style={styles.productName}>{item.name}</strong>
+                                        <p style={styles.productDescription}>{item.description}</p>
+                                        <div style={styles.priceQuantity}>
+                                            <span style={styles.price}>${item.price}</span>
+                                            <span style={styles.quantity}>Quantity: {item.quantity}</span>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => removeFromCart(item.id)}
+                                        style={styles.removeButton}>
+                                        Remove
+                                    </button>
                                 </div>
-                                <div>Quantity: {item.quantity}</div>
-                                <button 
-                                    onClick={() => removeFromCart(item.id)} 
-                                    style={styles.removeButton}>
-                                    Remove
-                                </button>
                             </li>
                         ))}
                     </ul>
-                    <button
-                        onClick={handleProceedToCheckout}
-                        style={styles.checkoutButton}
-                    >
-                        Proceed to Checkout
-                    </button>
+                    <div style={styles.buttonContainer}>
+                        <button
+                            onClick={handleProceedToCheckout}
+                            style={styles.checkoutButton}
+                        >
+                            Proceed to Checkout
+                        </button>
 
-                    {/* Clear Cart Button */}
-                    <button
-                        onClick={clearCart} // Call clearCart function from props
-                        style={styles.clearCartButton}
-                    >
-                        Clear Cart
-                    </button>
+                        <button
+                            onClick={clearCart} // Call clearCart function from props
+                            style={styles.clearCartButton}
+                        >
+                            Clear Cart
+                        </button>
+                    </div>
 
                     {isCheckoutVisible && (
-                        <Checkout 
-                            cartItems={cartItems} 
-                            totalAmount={cartItems.reduce((total, item) => total + item.price * item.quantity, 0)} 
-                            clearCart={clearCart} 
+                        <Checkout
+                            cartItems={cartItems}
+                            totalAmount={cartItems.reduce((total, item) => total + item.price * item.quantity, 0)}
+                            clearCart={clearCart}
                         />
                     )}
                 </>
@@ -69,17 +81,26 @@ const styles = {
     container: {
         textAlign: 'left',
         margin: '50px auto 20px',
-        maxWidth: '600px',
+        maxWidth: '800px',
         padding: '20px',
         borderRadius: '10px',
-        backgroundColor: '#f9f9f9',
-        boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+        backgroundColor: '#fff',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
+        alignItems: 'flex-start',
     },
     title: {
         textAlign: 'center',
+        marginBottom: '20px',
+        fontSize: '24px',
+        fontWeight: 'bold',
+        color: '#333',
+    },
+    emptyMessage: {
+        textAlign: 'center',
+        fontSize: '18px',
+        color: '#888',
     },
     itemList: {
         listStyleType: 'none',
@@ -87,41 +108,94 @@ const styles = {
         width: '100%',
     },
     item: {
-        margin: '10px 0',
-        borderBottom: '1px solid #ccc',
+        margin: '15px 0',
+        borderBottom: '1px solid #e0e0e0',
         paddingBottom: '10px',
         width: '100%',
+        display: 'flex',
+        alignItems: 'flex-start',
+        padding: '15px',
+        borderRadius: '5px',
+        transition: 'background-color 0.2s',
+        backgroundColor: '#f9f9f9',
     },
     itemDetails: {
-        marginBottom: '5px',
+        display: 'flex',
+        flex: 1,
+        alignItems: 'center',
+    },
+    productImage: {
+        width: '100px',
+        height: '100px',
+        objectFit: 'cover',
+        borderRadius: '5px',
+        marginRight: '15px',
+    },
+    productInfo: {
+        flex: 1,
+        marginRight: '10px',
+    },
+    productName: {
+        fontSize: '18px',
+        fontWeight: '600',
+        color: '#333',
+    },
+    productDescription: {
+        fontSize: '14px',
+        color: '#666',
+    },
+    priceQuantity: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        marginTop: '5px',
+    },
+    price: {
+        fontSize: '16px',
+        fontWeight: 'bold',
+        color: '#000',
+    },
+    quantity: {
+        fontSize: '14px',
+        color: '#333',
     },
     removeButton: {
-        marginLeft: '10px',
-        padding: '5px 10px',
-        backgroundColor: 'black',
+        marginLeft: '15px',
+        padding: '8px 12px',
+        backgroundColor: '#ff4d4d',
         color: 'white',
         border: 'none',
+        borderRadius: '5px',
         cursor: 'pointer',
+        transition: 'background-color 0.3s',
+    },
+    removeButtonHover: {
+        backgroundColor: '#ff1a1a',
+    },
+    buttonContainer: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        width: '100%',
+        marginTop: '20px',
     },
     checkoutButton: {
-        marginTop: '20px',
         padding: '10px 20px',
-        backgroundColor: 'black',
+        backgroundColor: '#333',
         color: 'white',
         border: 'none',
-        cursor: 'pointer',
-        width: '100%',
         borderRadius: '5px',
+        cursor: 'pointer',
+        width: '48%',
+        transition: 'background-color 0.3s',
     },
     clearCartButton: {
-        marginTop: '10px',
         padding: '10px 20px',
-        backgroundColor: 'red',
+        backgroundColor: '#d9534f',
         color: 'white',
         border: 'none',
-        cursor: 'pointer',
-        width: '100%',
         borderRadius: '5px',
+        cursor: 'pointer',
+        width: '48%',
+        transition: 'background-color 0.3s',
     },
 };
 

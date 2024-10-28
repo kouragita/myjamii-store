@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaFacebook, FaTwitter, FaInstagram, FaApple, FaGooglePlay } from 'react-icons/fa';
+import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 
 const Footer = () => {
     return (
@@ -22,7 +23,7 @@ const Footer = () => {
                 {/* Column 2: About */}
                 <div style={columnStyle}>
                     <h3 style={columnHeaderStyle}>About Us</h3>
-                    <p style={linkStyle}>About Us</p>
+                    <Link to="/about" style={linkStyle}>About Us</Link>
                     <p style={linkStyle}>Careers</p>
                     <p style={linkStyle}>Blog</p>
                 </div>
@@ -91,6 +92,7 @@ const linkStyle = {
     fontSize: '14px',
     color: '#ccc',
     marginBottom: '10px',
+    textDecoration: 'none',
 };
 
 const iconStyle = {
