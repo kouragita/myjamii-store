@@ -11,7 +11,7 @@ app = Flask(__name__)
 api = Api(app)
 CORS(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://myjamiishopdb_user:NyjOndGrNlhpJLatG3WxUhTdGtYgA88I@dpg-ctg0it8gph6c73fquihg-a.oregon-postgres.render.com/myjamiishopdb'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://myjamiishopdb_mtvm_user:azDKC8Vk8URLGrOcgClUgjzbO4PwIH2P@dpg-cvj32lbuibrs739knmv0-a.oregon-postgres.render.com/myjamiishopdb_mtvm'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 migrate = Migrate(app, db)
