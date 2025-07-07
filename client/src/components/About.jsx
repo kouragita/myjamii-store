@@ -67,8 +67,8 @@ const About = () => {
           </p>
           <p>
             <FontAwesomeIcon icon={faPhone} /> 
-            <a href="tel:0712345678" style={styles.contactLink}>0712345678</a> / 
-            <a href="tel:0787654321" style={styles.contactLink}>0787654321</a>
+            <a href="tel:0112153848" style={styles.contactLink}>0112153848</a> / 
+            <a href="tel:0787976130" style={styles.contactLink}>0787976130</a>
           </p>
         </div>
       </div>
