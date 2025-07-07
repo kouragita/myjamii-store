@@ -1,98 +1,7 @@
-// import React, { useState } from 'react';
-// import { Routes, Route, useNavigate } from 'react-router-dom';
-// import Navbar from './components/Navbar';
-// import Footer from './components/Footer';  // Import Footer component
-// import Login from './components/Login';
-// import Signup from './components/Signup';
-// import ProductList from './components/ProductList';
-// import Cart from './components/Cart';
-// import About from './components/About';
-// import Home from './components/Home';
-// import AdminDashboard from './components/AdminDashboard';
-
-// const App = () => {
-//     const [user, setUser] = useState(null);
-//     const [cartItems, setCartItems] = useState([]);
-//     const navigate = useNavigate();
-
-//     const addToCart = (product) => {
-//         setCartItems((prevItems) => {
-//             const existingItem = prevItems.find(item => item.id === product.id);
-//             if (existingItem) {
-//                 return prevItems.map(item =>
-//                     item.id === product.id
-//                         ? { ...item, quantity: item.quantity + 1 }
-//                         : item
-//                 );
-//             }
-//             return [...prevItems, { ...product, quantity: 1 }];
-//         });
-//     };
-
-//     const removeFromCart = (productId) => {
-//         setCartItems((prevItems) => 
-//             prevItems.filter(item => item.id !== productId)
-//         );
-//     };
-
-//     const clearCart = () => {
-//         setCartItems([]); // Set cartItems to an empty array
-//     };
-
-//     const handleLogin = (userData) => {
-//         setUser(userData);
-//         navigate('/');
-//     };
-
-//     const handleLogout = () => {
-//         setUser(null);
-//         setCartItems([]);
-//         navigate('/');
-//     };
-
-//     const handleSignup = (userData) => {
-//         setUser(userData);
-//         navigate('/');
-//     };
-
-//     const isLoggedIn = !!user; // Determine if the user is logged in
-
-//     return (
-//         <>
-//             <Navbar onLogout={handleLogout} user={user} />
-//             <Routes>
-//                 <Route path="/" element={<Home />} />
-//                 <Route path="/products" element={<ProductList addToCart={addToCart} />} />
-//                 <Route path="/signup" element={<Signup onSignup={handleSignup} />} />
-//                 <Route 
-//                     path="/cart" 
-//                     element={
-//                         <Cart 
-//                             cartItems={cartItems} 
-//                             removeFromCart={removeFromCart} 
-//                             clearCart={clearCart} 
-//                             isLoggedIn={isLoggedIn} 
-//                         />
-//                     } 
-//                 />
-//                 <Route path="/about" element={<About />} />
-//                 <Route path="/login" element={<Login onLogin={handleLogin} />} />
-//                 {user && user.role === 'admin' && (
-//                     <Route path="/admin-dashboard" element={<AdminDashboard />} />
-//                 )}
-//             </Routes>
-            
-//             <Footer />
-//         </>
-//     );
-// };
-
-// export default App;
-
-import React, { useState } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import Footer from './components/Footer';  // Import Footer component
+import Footer from './components/Footer';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import ProductList from './components/ProductList';
@@ -102,9 +11,49 @@ import Home from './components/Home';
 import AdminDashboard from './components/AdminDashboard';
 
 const App = () => {
-    const [user, setUser ] = useState(null);
+    const [user, setUser] = useState(null);
     const [cartItems, setCartItems] = useState([]);
     const navigate = useNavigate();
+
+    // Load data from localStorage on component mount
+    useEffect(() => {
+        try {
+            const storedUser = localStorage.getItem('myjamii_user');
+            const storedCart = localStorage.getItem('myjamii_cart');
+            
+            if (storedUser) {
+                setUser(JSON.parse(storedUser));
+            }
+            
+            if (storedCart) {
+                setCartItems(JSON.parse(storedCart));
+            }
+        } catch (error) {
+            console.error('Error loading stored data:', error);
+        }
+    }, []);
+
+    // Save cart to localStorage whenever it changes
+    useEffect(() => {
+        try {
+            localStorage.setItem('myjamii_cart', JSON.stringify(cartItems));
+        } catch (error) {
+            console.error('Error saving cart:', error);
+        }
+    }, [cartItems]);
+
+    // Save user to localStorage whenever it changes
+    useEffect(() => {
+        try {
+            if (user) {
+                localStorage.setItem('myjamii_user', JSON.stringify(user));
+            } else {
+                localStorage.removeItem('myjamii_user');
+            }
+        } catch (error) {
+            console.error('Error saving user:', error);
+        }
+    }, [user]);
 
     const addToCart = (product) => {
         setCartItems((prevItems) => {
@@ -126,56 +75,134 @@ const App = () => {
         );
     };
 
+    const updateCartQuantity = (productId, quantity) => {
+        if (quantity <= 0) {
+            removeFromCart(productId);
+            return;
+        }
+        
+        setCartItems((prevItems) =>
+            prevItems.map(item =>
+                item.id === productId
+                    ? { ...item, quantity }
+                    : item
+            )
+        );
+    };
+
     const clearCart = () => {
-        setCartItems([]); // Set cartItems to an empty array
+        setCartItems([]);
     };
 
     const handleLogin = (userData) => {
-        setUser (userData);
+        setUser(userData);
         navigate('/');
     };
 
     const handleLogout = () => {
-        setUser (null);
+        setUser(null);
         setCartItems([]);
+        localStorage.removeItem('myjamii_user');
+        localStorage.removeItem('myjamii_cart');
         navigate('/');
     };
 
     const handleSignup = (userData) => {
-        setUser (userData);
+        setUser(userData);
         navigate('/');
     };
 
-    const isLoggedIn = !!user; // Determine if the user is logged in
+    const isLoggedIn = !!user;
+    const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
     return (
-        <>
-            <Navbar onLogout={handleLogout} user={user} cartItemCount={cartItems.length} />
-            <div className="min-h-screen flex flex-col pt-16"> {/* Added pt-16 to prevent content overlap */}
+        <div className="min-h-screen flex flex-col bg-gray-50">
+            <Navbar 
+                onLogout={handleLogout} 
+                user={user} 
+                cartItemCount={cartItemCount} 
+            />
+            
+            {/* Main content area with proper spacing for fixed navbar */}
+            <main className="flex-1 pt-16">
                 <Routes>
                     <Route path="/" element={<Home />} />
-                    <Route path="/products" element={<ProductList addToCart={addToCart} />} />
-                    <Route path="/signup" element={<Signup onSignup={handleSignup} />} />
+                    
+                    <Route 
+                        path="/products" 
+                        element={<ProductList addToCart={addToCart} />} 
+                    />
+                    
+                    <Route 
+                        path="/signup" 
+                        element={
+                            isLoggedIn ? 
+                            <Navigate to="/" replace /> : 
+                            <Signup onSignup={handleSignup} />
+                        } 
+                    />
+                    
+                    <Route 
+                        path="/login" 
+                        element={
+                            isLoggedIn ? 
+                            <Navigate to="/" replace /> : 
+                            <Login onLogin={handleLogin} />
+                        } 
+                    />
+                    
                     <Route 
                         path="/cart" 
                         element={
                             <Cart 
                                 cartItems={cartItems} 
                                 removeFromCart={removeFromCart} 
+                                updateCartQuantity={updateCartQuantity}
                                 clearCart={clearCart} 
                                 isLoggedIn={isLoggedIn} 
+                                user={user}
                             />
                         } 
                     />
+                    
                     <Route path="/about" element={<About />} />
-                    <Route path="/login" element={<Login onLogin={handleLogin} />} />
+                    
+                    {/* Protected Admin Route */}
                     {user && user.role === 'admin' && (
-                        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+                        <Route 
+                            path="/admin-dashboard" 
+                            element={<AdminDashboard user={user} />} 
+                        />
                     )}
+                    
+                    {/* 404 Not Found Route */}
+                    <Route 
+                        path="*" 
+                        element={
+                            <div className="min-h-screen flex items-center justify-center">
+                                <div className="text-center p-6">
+                                    <div className="text-6xl mb-4">🔍</div>
+                                    <h1 className="text-3xl font-bold text-gray-800 mb-2">
+                                        Page Not Found
+                                    </h1>
+                                    <p className="text-gray-600 mb-6">
+                                        The page you're looking for doesn't exist.
+                                    </p>
+                                    <button
+                                        onClick={() => navigate('/')}
+                                        className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300"
+                                    >
+                                        Go Home
+                                    </button>
+                                </div>
+                            </div>
+                        } 
+                    />
                 </Routes>
-            </div>
+            </main>
+            
             <Footer />
-        </>
+        </div>
     );
 };
 
