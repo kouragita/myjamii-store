@@ -40,37 +40,37 @@ const About = () => {
     }
   };
 
-  // About Us Carousel Images
-  const aboutImages = [
+  // Hero Carousel Images for About Page
+  const heroImages = [
     {
-      src: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&h=500&fit=crop',
+      src: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&h=600&fit=crop',
       title: 'Our Amazing Team',
-      description: 'Passionate professionals working together to create exceptional experiences'
+      subtitle: 'Passionate professionals working together'
     },
     {
-      src: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=1200&h=500&fit=crop',
+      src: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=1200&h=600&fit=crop',
       title: 'Innovation at Work',
-      description: 'Cutting-edge technology and creative solutions driving our success'
+      subtitle: 'Cutting-edge technology and creative solutions'
     },
     {
-      src: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1200&h=500&fit=crop',
+      src: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1200&h=600&fit=crop',
       title: 'Global Reach',
-      description: 'Connecting customers worldwide with quality products and services'
+      subtitle: 'Connecting customers worldwide'
     },
     {
-      src: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=1200&h=500&fit=crop',
+      src: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=1200&h=600&fit=crop',
       title: 'Customer Success',
-      description: 'Every smile represents our commitment to exceptional customer service'
+      subtitle: 'Every smile represents our commitment'
     },
     {
-      src: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&h=500&fit=crop',
+      src: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&h=600&fit=crop',
       title: 'Quality Focus',
-      description: 'Rigorous quality control ensures every product meets our high standards'
+      subtitle: 'Rigorous standards for every product'
     },
     {
-      src: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1200&h=500&fit=crop',
+      src: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1200&h=600&fit=crop',
       title: 'Sustainable Future',
-      description: 'Building a better tomorrow through eco-friendly practices and innovation'
+      subtitle: 'Building a better tomorrow'
     }
   ];
 
@@ -131,78 +131,16 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* Hero Section */}
-      <motion.section 
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="relative py-20 sm:py-24 lg:py-32 bg-gradient-to-r from-blue-600 to-purple-700 text-white overflow-hidden"
-      >
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-            backgroundSize: '60px 60px'
-          }} />
-        </div>
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6"
-          >
-            About MyJamii Stores
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-xl sm:text-2xl mb-8 opacity-90 max-w-3xl mx-auto"
-          >
-            Connecting communities through exceptional shopping experiences since 2020
-          </motion.p>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="inline-flex items-center justify-center w-20 h-20 bg-white bg-opacity-20 rounded-full backdrop-blur-sm"
-          >
-            <FontAwesomeIcon icon={faStar} className="text-3xl text-yellow-300" />
-          </motion.div>
-        </div>
-      </motion.section>
-
-      {/* About Us Carousel Section */}
-      <motion.section 
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-        className="py-12 sm:py-16 lg:py-20"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-800 mb-6">
-              Our Story in Pictures
-            </h2>
-            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
-              Take a visual journey through our company culture, values, and the passion that drives us every day
-            </p>
-          </motion.div>
-
-          <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+      {/* Hero Section with Carousel */}
+      <section className="relative">
+        <div className="w-full max-w-7xl mx-auto">
+          <div className="relative rounded-xl overflow-hidden shadow-2xl mx-4 mt-4 lg:mx-8">
             <Carousel
               autoPlay
               infiniteLoop
               showThumbs={false}
               showStatus={false}
-              interval={5000}
+              interval={4000}
               showArrows={true}
               className="relative"
               renderArrowPrev={(onClickHandler, hasPrev, label) =>
@@ -234,27 +172,40 @@ const About = () => {
                 )
               }
             >
-              {aboutImages.map((image, index) => (
-                <div key={index} className="relative h-64 sm:h-80 md:h-96 lg:h-[450px]">
+              {heroImages.map((image, index) => (
+                <div key={index} className="relative h-80 sm:h-96 md:h-[500px] lg:h-[600px]">
                   <img 
                     src={image.src} 
                     alt={image.title} 
                     className="w-full h-full object-cover"
                   />
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex flex-col justify-end p-6 sm:p-8 lg:p-12">
+                  {/* Subtle overlay for text readability */}
+                  <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-center items-center text-center px-4">
                     <motion.div
                       initial={{ opacity: 0, y: 30 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.8, delay: 0.2 }}
-                      className="text-white text-left max-w-2xl"
+                      className="text-white max-w-4xl"
                     >
-                      <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 drop-shadow-lg">
-                        {image.title}
-                      </h3>
-                      <p className="text-base sm:text-lg lg:text-xl opacity-90 drop-shadow-lg">
-                        {image.description}
+                      <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 drop-shadow-lg">
+                        About MyJamii Stores
+                      </h1>
+                      <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl mb-4 opacity-90 drop-shadow-lg">
+                        Connecting communities through exceptional shopping experiences since 2020
                       </p>
+                      <div className="flex items-center justify-center space-x-4 mt-6">
+                        <div className="inline-flex items-center justify-center w-16 h-16 bg-white bg-opacity-20 rounded-full backdrop-blur-sm">
+                          <FontAwesomeIcon icon={faStar} className="text-2xl text-yellow-300" />
+                        </div>
+                        <div className="text-left">
+                          <h3 className="text-xl sm:text-2xl font-bold text-yellow-300 drop-shadow-lg">
+                            {image.title}
+                          </h3>
+                          <p className="text-sm sm:text-base opacity-90 drop-shadow-lg">
+                            {image.subtitle}
+                          </p>
+                        </div>
+                      </div>
                     </motion.div>
                   </div>
                 </div>
@@ -262,7 +213,7 @@ const About = () => {
             </Carousel>
           </div>
         </div>
-      </motion.section>
+      </section>
 
       {/* Mission Section */}
       <motion.section 
@@ -270,7 +221,7 @@ const About = () => {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true }}
-        className="py-16 sm:py-20 lg:py-24 bg-white"
+        className="py-16 sm:py-20 lg:py-24"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
@@ -325,7 +276,7 @@ const About = () => {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true }}
-        className="py-16 sm:py-20 lg:py-24 bg-gradient-to-br from-gray-50 to-gray-100"
+        className="py-16 sm:py-20 lg:py-24 bg-white"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div variants={itemVariants} className="text-center mb-16">
@@ -343,9 +294,9 @@ const About = () => {
                 key={index}
                 variants={itemVariants}
                 whileHover={{ y: -5, scale: 1.02 }}
-                className="bg-white rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300"
+                className="bg-gray-50 rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300"
               >
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-50 rounded-full shadow-lg mb-6">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-full shadow-lg mb-6">
                   <FontAwesomeIcon icon={value.icon} className={`text-2xl ${value.color}`} />
                 </div>
                 <h3 className="text-xl font-bold text-gray-800 mb-4">{value.title}</h3>
