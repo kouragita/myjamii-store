@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Background circle -->
+  <circle cx="50" cy="50" r="48" fill="currentColor"/>
+  
+  <!-- Letter M -->
+  <path d="M20 25 L20 75 L28 75 L28 40 L35 55 L42 40 L42 75 L50 75 L50 25 L40 25 L35 45 L30 25 Z" fill="white"/>
+  
+  <!-- Shopping bag icon -->
+  <rect x="55" y="35" width="20" height="25" rx="2" fill="none" stroke="white" stroke-width="2"/>
+  <path d="M60 35 C60 30, 65 25, 70 25 C75 25, 80 30, 80 35" fill="none" stroke="white" stroke-width="2"/>
+  
+  <!-- Small decorative dots -->
+  <circle cx="25" cy="80" r="2" fill="white"/>
+  <circle cx="75" cy="80" r="2" fill="white"/>
+</svg>

@@ -9,6 +9,11 @@ import Cart from './components/Cart';
 import About from './components/About';
 import Home from './components/Home';
 import AdminDashboard from './components/AdminDashboard';
+import Checkout from './components/Checkout';
+import NotificationProvider from './components/NotificationProvider';
+import PWAInstall from './components/PWAInstall';
+import ScrollToTop from './components/ScrollToTop';
+import './App.css';
 
 const App = () => {
     const [user, setUser] = useState(null);
@@ -115,94 +120,126 @@ const App = () => {
     const isLoggedIn = !!user;
     const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
+    // Protected Route Component
+    const ProtectedRoute = ({ children, requiredRole }) => {
+        if (!user) {
+            return <Navigate to="/login" replace />;
+        }
+        
+        if (requiredRole && user.role !== requiredRole) {
+            return <Navigate to="/" replace />;
+        }
+        
+        return children;
+    };
+
     return (
-        <div className="min-h-screen flex flex-col bg-gray-50">
-            <Navbar 
-                onLogout={handleLogout} 
-                user={user} 
-                cartItemCount={cartItemCount} 
-            />
-            
-            {/* Main content area with proper spacing for fixed navbar */}
-            <main className="flex-1 pt-16">
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    
-                    <Route 
-                        path="/products" 
-                        element={<ProductList addToCart={addToCart} />} 
-                    />
-                    
-                    <Route 
-                        path="/signup" 
-                        element={
-                            isLoggedIn ? 
-                            <Navigate to="/" replace /> : 
-                            <Signup onSignup={handleSignup} />
-                        } 
-                    />
-                    
-                    <Route 
-                        path="/login" 
-                        element={
-                            isLoggedIn ? 
-                            <Navigate to="/" replace /> : 
-                            <Login onLogin={handleLogin} />
-                        } 
-                    />
-                    
-                    <Route 
-                        path="/cart" 
-                        element={
-                            <Cart 
-                                cartItems={cartItems} 
-                                removeFromCart={removeFromCart} 
-                                updateCartQuantity={updateCartQuantity}
-                                clearCart={clearCart} 
-                                isLoggedIn={isLoggedIn} 
-                                user={user}
-                            />
-                        } 
-                    />
-                    
-                    <Route path="/about" element={<About />} />
-                    
-                    {/* Protected Admin Route */}
-                    {user && user.role === 'admin' && (
+        <NotificationProvider>
+            <div className="min-h-screen flex flex-col bg-gray-50">
+                <ScrollToTop />
+                <Navbar 
+                    onLogout={handleLogout} 
+                    user={user} 
+                    cartItemCount={cartItemCount} 
+                />
+                
+                {/* Main content area with proper spacing for fixed navbar */}
+                <main className="flex-1 pt-16">
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        
+                        <Route 
+                            path="/products" 
+                            element={<ProductList addToCart={addToCart} />} 
+                        />
+                        
+                        <Route 
+                            path="/signup" 
+                            element={
+                                isLoggedIn ? 
+                                <Navigate to="/" replace /> : 
+                                <Signup onSignup={handleSignup} />
+                            } 
+                        />
+                        
+                        <Route 
+                            path="/login" 
+                            element={
+                                isLoggedIn ? 
+                                <Navigate to="/" replace /> : 
+                                <Login onLogin={handleLogin} />
+                            } 
+                        />
+                        
+                        <Route 
+                            path="/cart" 
+                            element={
+                                <Cart 
+                                    cartItems={cartItems} 
+                                    removeFromCart={removeFromCart} 
+                                    updateCartQuantity={updateCartQuantity}
+                                    clearCart={clearCart} 
+                                    isLoggedIn={isLoggedIn} 
+                                    user={user}
+                                />
+                            } 
+                        />
+
+                        <Route 
+                            path="/checkout" 
+                            element={
+                                <Checkout 
+                                    cartItems={cartItems}
+                                    clearCart={clearCart}
+                                    user={user}
+                                />
+                            } 
+                        />
+                        
+                        <Route path="/about" element={<About />} />
+                        
+                        {/* Protected Admin Route */}
                         <Route 
                             path="/admin-dashboard" 
-                            element={<AdminDashboard user={user} />} 
+                            element={
+                                <ProtectedRoute requiredRole="admin">
+                                    <AdminDashboard user={user} />
+                                </ProtectedRoute>
+                            } 
                         />
-                    )}
-                    
-                    {/* 404 Not Found Route */}
-                    <Route 
-                        path="*" 
-                        element={
-                            <div className="min-h-screen flex items-center justify-center">
-                                <div className="text-center p-6">
-                                    <div className="text-6xl mb-4">🔍</div>
-                                    <h1 className="text-3xl font-bold text-gray-800 mb-2">
-                                        Page Not Found
-                                    </h1>
-                                    <p className="text-gray-600 mb-6">
-                                        The page you're looking for doesn't exist.
-                                    </p>
-                                    <button
-                                        onClick={() => navigate('/')}
-                                        className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300"
-                                    >
-                                        Go Home
-                                    </button>
+                        
+                        {/* 404 Not Found Route */}
+                        <Route 
+                            path="*" 
+                            element={
+                                <div className="min-h-screen flex items-center justify-center">
+                                    <div className="text-center p-6">
+                                        <div className="text-6xl mb-4">🔍</div>
+                                        <h1 className="text-3xl font-bold text-gray-800 mb-2">
+                                            Page Not Found
+                                        </h1>
+                                        <p className="text-gray-600 mb-6">
+                                            The page you're looking for doesn't exist.
+                                        </p>
+                                        <button
+                                            onClick={() => navigate('/')}
+                                            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300"
+                                        >
+                                            Go Home
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        } 
-                    />
-                </Routes>
-            </main>
-            
-            <Footer />
-        </div>
+                            } 
+                        />
+                    </Routes>
+                </main>
+                
+                <Footer />
+
+                {/* PWA Install Prompt */}
+                <PWAInstall />
+            </div>
+        </NotificationProvider>
     );
 };
 
