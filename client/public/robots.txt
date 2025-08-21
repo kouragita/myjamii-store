@@ -1,0 +1,42 @@
+# Myjamii Store - Robots.txt Configuration
+# Generated on: January 21, 2025
+# Site: https://myjamii-store-client.onrender.com
+
+User-agent: *
+
+# Allow all crawlers to access main content areas
+Allow: /
+Allow: /products
+Allow: /about
+Allow: /login
+Allow: /signup
+
+# Block admin areas and private sections
+Disallow: /admin-dashboard
+Disallow: /admin/
+Disallow: /admin-*
+
+# Block cart and checkout for privacy (users' personal data)
+Disallow: /cart
+Disallow: /checkout
+
+# Allow crawling of category-specific product pages
+Allow: /products?category=*
+Allow: /products/*
+
+# Block any private or temporary directories
+Disallow: /private/
+Disallow: /temp/
+Disallow: /tmp/
+Disallow: /_private/
+
+# Block manifest and service worker files
+Disallow: /manifest.json
+Disallow: /sw.js
+Disallow: /workbox-*
+
+# Sitemap location
+Sitemap: https://myjamii-store-client.onrender.com/sitemap.xml
+
+# Crawl delay (optional - be respectful to server resources)
+Crawl-delay: 1

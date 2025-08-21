@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Homepage -->
+  <url>
+    <loc>https://myjamii-store-client.onrender.com/</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  
+  <!-- Products main page -->
+  <url>
+    <loc>https://myjamii-store-client.onrender.com/products</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- About page -->
+  <url>
+    <loc>https://myjamii-store-client.onrender.com/about</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Auth pages -->
+  <url>
+    <loc>https://myjamii-store-client.onrender.com/login</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://myjamii-store-client.onrender.com/signup</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <!-- Cart and Checkout (dynamic, but important for UX) -->
+  <url>
+    <loc>https://myjamii-store-client.onrender.com/cart</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://myjamii-store-client.onrender.com/checkout</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <!-- Category filtered product pages -->
+  <!-- Electronics (ID: 1) -->
+  <url>
+    <loc>https://myjamii-store-client.onrender.com/products?category=1</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Clothing (ID: 2) -->
+  <url>
+    <loc>https://myjamii-store-client.onrender.com/products?category=2</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Books (ID: 3) -->
+  <url>
+    <loc>https://myjamii-store-client.onrender.com/products?category=3</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Home Appliances (ID: 4) -->
+  <url>
+    <loc>https://myjamii-store-client.onrender.com/products?category=4</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Sports (ID: 5) -->
+  <url>
+    <loc>https://myjamii-store-client.onrender.com/products?category=5</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Individual Product Pages (if your app supports them) -->
+  <!-- iPhone (ID: 1) -->
+  <url>
+    <loc>https://myjamii-store-client.onrender.com/products/1</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Moschinno T-shirt (ID: 2) -->
+  <url>
+    <loc>https://myjamii-store-client.onrender.com/products/2</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- HP laptop (ID: 3) -->
+  <url>
+    <loc>https://myjamii-store-client.onrender.com/products/3</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Mindset (ID: 4) -->
+  <url>
+    <loc>https://myjamii-store-client.onrender.com/products/4</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Samsung Galaxy (ID: 5) -->
+  <url>
+    <loc>https://myjamii-store-client.onrender.com/products/5</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Nike Running Shoes (ID: 6) -->
+  <url>
+    <loc>https://myjamii-store-client.onrender.com/products/6</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Blender (ID: 7) -->
+  <url>
+    <loc>https://myjamii-store-client.onrender.com/products/7</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Yoga Mat (ID: 8) -->
+  <url>
+    <loc>https://myjamii-store-client.onrender.com/products/8</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Sony Headphones (ID: 9) -->
+  <url>
+    <loc>https://myjamii-store-client.onrender.com/products/9</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Levi's Jeans (ID: 10) -->
+  <url>
+    <loc>https://myjamii-store-client.onrender.com/products/10</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Microwave Oven (ID: 11) -->
+  <url>
+    <loc>https://myjamii-store-client.onrender.com/products/11</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+</urlset>
