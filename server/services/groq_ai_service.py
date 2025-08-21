@@ -38,9 +38,16 @@ class GroqAIService:
             # Initialize Redis for caching (optional)
             redis_url = os.getenv('REDIS_URL', 'redis://localhost:6379')
             try:
-                self.redis_client = redis.from_url(redis_url, decode_responses=True)
+                self.redis_client = redis.from_url(
+                    redis_url, 
+                    decode_responses=True,
+                    socket_connect_timeout=5,
+                    socket_timeout=5,
+                    retry_on_timeout=True,
+                    health_check_interval=30
+                )
                 self.redis_client.ping()  # Test connection
-                logger.info("Redis client initialized successfully")
+                logger.info(f"Redis client initialized successfully at {redis_url}")
             except Exception as e:
                 logger.warning(f"Redis not available, using memory cache: {e}")
                 self.redis_client = None
