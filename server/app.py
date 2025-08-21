@@ -6,13 +6,17 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_cors import CORS
 from flask_migrate import Migrate
 import os
+from dotenv import load_dotenv
 
+load_dotenv()
 app = Flask(__name__)
 api = Api(app)
 CORS(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://ready_ftiv_user:W3dh47RnzcgAvSd8pv0Qx91yMcVmcqhq@dpg-d1m2e6ndiees7390t11g-a.oregon-postgres.render.com/ready_ftiv'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# Database configuration from environment
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.getenv('SQLALCHEMY_TRACK_MODIFICATIONS', 'False').lower() == 'true'
+
 
 migrate = Migrate(app, db)
 db.init_app(app)
