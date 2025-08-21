@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_restful import Api, Resource, reqparse
 from flask_sqlalchemy import SQLAlchemy
-from models import db, User, Product, Cart, CartItem, Category
+from models import db, User, Product, Cart, CartItem, Category, AIGeneratedContent, SEOMetadata, AIUsageAnalytics
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_cors import CORS
 from flask_migrate import Migrate
@@ -218,11 +218,44 @@ class CategoryAPI(Resource):
         db.session.commit()
         return jsonify({'message': 'Category deleted successfully'})
 
+# Import AI routes
+from routes.ai_routes import (
+    AIProductDescriptionAPI, 
+    AIProductMetaTagsAPI, 
+    AICategoryMetaTagsAPI, 
+    AIBatchGenerationAPI, 
+    AIAnalyticsAPI
+)
+
+# Import SEO routes
+from routes.seo_routes import (
+    SEOProductPageAPI,
+    SEOCategoryPageAPI,
+    SEOHomepageAPI,
+    DynamicSitemapAPI,
+    RobotsTxtAPI
+)
+
+# Original API routes
 api.add_resource(CategoryAPI, '/categories', '/categories/<int:category_id>')
 api.add_resource(UserLoginAPI, '/login')
 api.add_resource(UserSignupAPI, '/signup')
 api.add_resource(ProductAPI, '/products', '/products/category/<int:category_id>', '/products/<int:product_id>')
 api.add_resource(StockReductionAPI, '/products/<int:product_id>/reduce_stock')
+
+# AI-powered API routes
+api.add_resource(AIProductDescriptionAPI, '/ai/products/<int:product_id>/description')
+api.add_resource(AIProductMetaTagsAPI, '/ai/products/<int:product_id>/meta-tags')
+api.add_resource(AICategoryMetaTagsAPI, '/ai/categories/<int:category_id>/meta-tags')
+api.add_resource(AIBatchGenerationAPI, '/ai/batch-generate')
+api.add_resource(AIAnalyticsAPI, '/ai/analytics')
+
+# SEO server-side rendering routes (for crawlers)
+api.add_resource(SEOProductPageAPI, '/seo/products/<int:product_id>')
+api.add_resource(SEOCategoryPageAPI, '/seo/categories/<int:category_id>')
+api.add_resource(SEOHomepageAPI, '/seo/homepage')
+api.add_resource(DynamicSitemapAPI, '/sitemap.xml')
+api.add_resource(RobotsTxtAPI, '/robots.txt')
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5555))
