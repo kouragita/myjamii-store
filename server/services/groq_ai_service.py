@@ -8,7 +8,10 @@ from typing import Optional, Dict, Any, List
 from datetime import datetime, timedelta
 from groq import Groq
 from flask import current_app
-import redis
+try:
+    import redis
+except ImportError:
+    redis = None
 import logging
 
 # Configure logging
@@ -36,21 +39,25 @@ class GroqAIService:
             logger.info("Groq client initialized successfully")
             
             # Initialize Redis for caching (optional)
-            redis_url = os.getenv('REDIS_URL', 'redis://localhost:6379')
-            try:
-                self.redis_client = redis.from_url(
-                    redis_url, 
-                    decode_responses=True,
-                    socket_connect_timeout=5,
-                    socket_timeout=5,
-                    retry_on_timeout=True,
-                    health_check_interval=30
-                )
-                self.redis_client.ping()  # Test connection
-                logger.info(f"Redis client initialized successfully at {redis_url}")
-            except Exception as e:
-                logger.warning(f"Redis not available, using memory cache: {e}")
+            if redis is None:
+                logger.warning("Redis package not installed, using memory cache")
                 self.redis_client = None
+            else:
+                redis_url = os.getenv('REDIS_URL', 'redis://localhost:6379')
+                try:
+                    self.redis_client = redis.from_url(
+                        redis_url, 
+                        decode_responses=True,
+                        socket_connect_timeout=5,
+                        socket_timeout=5,
+                        retry_on_timeout=True,
+                        health_check_interval=30
+                    )
+                    self.redis_client.ping()  # Test connection
+                    logger.info(f"Redis client initialized successfully at {redis_url}")
+                except Exception as e:
+                    logger.warning(f"Redis not available, using memory cache: {e}")
+                    self.redis_client = None
                 
         except Exception as e:
             logger.error(f"Failed to initialize AI service: {e}")
