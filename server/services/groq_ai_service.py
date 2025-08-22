@@ -116,7 +116,7 @@ class GroqAIService:
             
             completion = self.client.chat.completions.create(
                 messages=[{"role": "user", "content": prompt}],
-                model="mixtral-8x7b-32768",
+                model="llama3-8b-8192",
                 temperature=0.3,
                 max_tokens=500
             )
@@ -135,7 +135,7 @@ class GroqAIService:
             result = {
                 **meta_data,
                 'ai_generated': True,
-                'model_used': 'mixtral-8x7b-32768',
+                'model_used': 'llama3-8b-8192',
                 'generation_time_ms': response_time,
                 'tokens_used': completion.usage.total_tokens,
                 'generated_at': datetime.utcnow().isoformat()
@@ -184,7 +184,7 @@ class GroqAIService:
             
             completion = self.client.chat.completions.create(
                 messages=[{"role": "user", "content": prompt}],
-                model="mixtral-8x7b-32768",
+                model="llama3-8b-8192",
                 temperature=0.7,
                 max_tokens=800
             )
@@ -196,7 +196,7 @@ class GroqAIService:
                 'original_description': product_data.get('description', ''),
                 'ai_description': ai_description,
                 'ai_generated': True,
-                'model_used': 'mixtral-8x7b-32768',
+                'model_used': 'llama3-8b-8192',
                 'generation_time_ms': response_time,
                 'tokens_used': completion.usage.total_tokens,
                 'generated_at': datetime.utcnow().isoformat()
@@ -255,7 +255,7 @@ Return only valid JSON format."""
 
             completion = self.client.chat.completions.create(
                 messages=[{"role": "user", "content": prompt}],
-                model="mixtral-8x7b-32768",
+                model="llama3-8b-8192",
                 temperature=0.3,
                 max_tokens=400
             )
@@ -271,7 +271,7 @@ Return only valid JSON format."""
             result = {
                 **meta_data,
                 'ai_generated': True,
-                'model_used': 'mixtral-8x7b-32768',
+                'model_used': 'llama3-8b-8192',
                 'generation_time_ms': response_time,
                 'tokens_used': completion.usage.total_tokens,
                 'generated_at': datetime.utcnow().isoformat()
