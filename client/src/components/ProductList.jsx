@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import CategoryFilter from './CategoryFilter';
-import { FaShoppingCart, FaHeart, FaEye, FaCheck, FaTimes, FaStar } from 'react-icons/fa';
+import SEOHead from './SEOHead';
+import groqSEOService from '../services/groqSEOService';
+import { FaShoppingCart, FaHeart, FaEye, FaCheck, FaTimes, FaStar, FaSearch } from 'react-icons/fa';
 
 const ProductList = ({ addToCart }) => {
+    const navigate = useNavigate();
     const [products, setProducts] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('');
     const [loading, setLoading] = useState(true);
@@ -12,29 +16,76 @@ const ProductList = ({ addToCart }) => {
     const [cartItems, setCartItems] = useState([]);
     const [wishlist, setWishlist] = useState([]);
     const [addedToCart, setAddedToCart] = useState({});
+    const [searchQuery, setSearchQuery] = useState('');
+    const [isSearching, setIsSearching] = useState(false);
+    // Removed AI descriptions - now handled in admin dashboard
+
+    // Search functionality
+    const handleSearch = async (query) => {
+        if (!query.trim()) {
+            fetchProducts();
+            return;
+        }
+
+        setIsSearching(true);
+        try {
+            let url = `https://myjamii-store.onrender.com/products/search?q=${encodeURIComponent(query.trim())}`;
+            if (selectedCategory) {
+                url += `&category_id=${selectedCategory}`;
+            }
+            
+            console.log("Searching products:", url);
+            const response = await axios.get(url);
+            setProducts(response.data.products);
+            console.log("Search Results:", response.data.products);
+        } catch (error) {
+            console.error("Error searching products:", error);
+            setError("Failed to search products");
+        } finally {
+            setIsSearching(false);
+        }
+    };
+
+    const fetchProducts = async () => {
+        setLoading(true); 
+        try {
+            const url = selectedCategory 
+                ? `https://myjamii-store.onrender.com/products/category/${selectedCategory}` 
+                : 'https://myjamii-store.onrender.com/products';
+            
+            console.log("Fetching Products from:", url); 
+            const response = await axios.get(url);
+            setProducts(response.data.products);
+            console.log("Products Fetched:", response.data.products);
+        } catch (error) {
+            console.error("Error fetching products:", error);
+            setError("Failed to load products");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchProducts = async () => {
-            setLoading(true); 
-            try {
-                const url = selectedCategory 
-                    ? `https://myjamii-store.onrender.com/products/category/${selectedCategory}` 
-                    : 'https://myjamii-store.onrender.com/products';
-                
-                console.log("Fetching Products from:", url); 
-                const response = await axios.get(url);
-                setProducts(response.data.products);
-                console.log("Products Fetched:", response.data.products); 
-            } catch (error) {
-                console.error('Error fetching products:', error);
-                setError('Failed to load products.');
-            } finally {
-                setLoading(false); 
-            }
-        };
-
-        fetchProducts();
+        if (searchQuery.trim()) {
+            handleSearch(searchQuery);
+        } else {
+            fetchProducts();
+        }
     }, [selectedCategory]);
+
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            if (searchQuery.trim()) {
+                handleSearch(searchQuery);
+            } else {
+                fetchProducts();
+            }
+        }, 500); // Debounce search by 500ms
+
+        return () => clearTimeout(timeoutId);
+    }, [searchQuery]);
+
+    // AI enhancement now handled exclusively in admin dashboard
 
     const handleAddToCart = (product) => {
         if (product.stock <= 0) {
@@ -106,7 +157,8 @@ const ProductList = ({ addToCart }) => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 whileHover={{ y: -5 }}
-                className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden group"
+                onClick={() => navigate(`/products/${product.id}`)}
+                className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden group cursor-pointer"
             >
                 {/* Image Section */}
                 <div className="relative overflow-hidden">
@@ -122,7 +174,10 @@ const ProductList = ({ addToCart }) => {
                             <motion.button
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
-                                onClick={() => toggleWishlist(product.id)}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleWishlist(product.id);
+                                }}
                                 className={`p-3 rounded-full backdrop-blur-sm transition-colors duration-300 ${
                                     isInWishlist 
                                         ? 'bg-red-500 text-white' 
@@ -135,7 +190,12 @@ const ProductList = ({ addToCart }) => {
                             <motion.button
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    navigate(`/products/${product.id}`);
+                                }}
                                 className="p-3 rounded-full bg-white bg-opacity-90 text-gray-700 hover:bg-blue-500 hover:text-white backdrop-blur-sm transition-colors duration-300"
+                                title="View Details"
                             >
                                 <FaEye className="w-4 h-4" />
                             </motion.button>
@@ -178,9 +238,11 @@ const ProductList = ({ addToCart }) => {
                     </h3>
 
                     {/* Product Description */}
-                    <p className="text-sm sm:text-base text-gray-600 mb-4 line-clamp-2">
-                        {product.description}
-                    </p>
+                    <div className="mb-4">
+                        <p className="text-sm sm:text-base text-gray-600 line-clamp-2">
+                            {product.description}
+                        </p>
+                    </div>
 
                     {/* Rating (if available) */}
                     <div className="flex items-center mb-3">
@@ -204,7 +266,10 @@ const ProductList = ({ addToCart }) => {
                     <motion.button
                         whileHover={{ scale: product.stock > 0 ? 1.02 : 1 }}
                         whileTap={{ scale: product.stock > 0 ? 0.98 : 1 }}
-                        onClick={() => product.stock > 0 && handleAddToCart(product)}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            if (product.stock > 0) handleAddToCart(product);
+                        }}
                         disabled={product.stock <= 0}
                         className={`w-full py-3 px-4 rounded-xl font-semibold text-sm sm:text-base transition-all duration-300 flex items-center justify-center space-x-2 ${
                             product.stock > 0
@@ -249,8 +314,15 @@ const ProductList = ({ addToCart }) => {
     );
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <>
+            {/* SEO Enhancement for Products Page */}
+            <SEOHead 
+                type={selectedCategory ? "category" : "products"} 
+                pageData={{ categoryName: selectedCategory ? `Category ${selectedCategory}` : null }}
+            />
+            
+            <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
@@ -276,6 +348,45 @@ const ProductList = ({ addToCart }) => {
                         onCategoryChange={setSelectedCategory} 
                         selectedCategory={selectedCategory} 
                     />
+                </motion.div>
+
+                {/* Search Bar */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="mb-8 max-w-2xl mx-auto"
+                >
+                    <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <FaSearch className="h-5 w-5 text-gray-400" />
+                        </div>
+                        <input
+                            type="text"
+                            placeholder="Search products by name, description, or features..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm transition-all duration-200"
+                        />
+                        {isSearching && (
+                            <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+                            </div>
+                        )}
+                    </div>
+                    {searchQuery && (
+                        <div className="mt-2 text-sm text-gray-600 flex items-center justify-between">
+                            <span>
+                                {isSearching ? 'Searching...' : `Found ${products.length} result${products.length !== 1 ? 's' : ''} for "${searchQuery}"`}
+                            </span>
+                            <button
+                                onClick={() => setSearchQuery('')}
+                                className="text-blue-500 hover:text-blue-700 underline"
+                            >
+                                Clear search
+                            </button>
+                        </div>
+                    )}
                 </motion.div>
 
                 {/* Loading State */}
@@ -362,6 +473,7 @@ const ProductList = ({ addToCart }) => {
                 )}
             </div>
         </div>
+        </>
     );
 };
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Login from './components/Login';
@@ -10,9 +11,11 @@ import About from './components/About';
 import Home from './components/Home';
 import AdminDashboard from './components/AdminDashboard';
 import Checkout from './components/Checkout';
+import ProductDetail from './components/ProductDetail';
 import NotificationProvider from './components/NotificationProvider';
 import PWAInstall from './components/PWAInstall';
 import ScrollToTop from './components/ScrollToTop';
+import SEOHead from './components/SEOHead';
 import './App.css';
 
 const App = () => {
@@ -134,23 +137,41 @@ const App = () => {
     };
 
     return (
-        <NotificationProvider>
-            <div className="min-h-screen flex flex-col bg-gray-50">
-                <ScrollToTop />
-                <Navbar 
-                    onLogout={handleLogout} 
-                    user={user} 
-                    cartItemCount={cartItemCount} 
-                />
+        <HelmetProvider>
+            <NotificationProvider>
+                <div className="min-h-screen flex flex-col bg-gray-50">
+                    <ScrollToTop />
+                    <Navbar 
+                        onLogout={handleLogout} 
+                        user={user} 
+                        cartItemCount={cartItemCount} 
+                    />
                 
                 {/* Main content area with proper spacing for fixed navbar */}
                 <main className="flex-1 pt-16">
                     <Routes>
-                        <Route path="/" element={<Home />} />
+                        <Route path="/" element={
+                            <>
+                                <SEOHead type="homepage" />
+                                <Home />
+                            </>
+                        } />
                         
                         <Route 
                             path="/products" 
-                            element={<ProductList addToCart={addToCart} />} 
+                            element={
+                                <>
+                                    <SEOHead type="products" />
+                                    <ProductList addToCart={addToCart} />
+                                </>
+                            } 
+                        />
+                        
+                        <Route 
+                            path="/products/:id" 
+                            element={
+                                <ProductDetail addToCart={addToCart} />
+                            } 
                         />
                         
                         <Route 
@@ -196,7 +217,12 @@ const App = () => {
                             } 
                         />
                         
-                        <Route path="/about" element={<About />} />
+                        <Route path="/about" element={
+                            <>
+                                <SEOHead type="about" />
+                                <About />
+                            </>
+                        } />
                         
                         {/* Protected Admin Route */}
                         <Route 
@@ -240,6 +266,7 @@ const App = () => {
                 <PWAInstall />
             </div>
         </NotificationProvider>
+        </HelmetProvider>
     );
 };
 

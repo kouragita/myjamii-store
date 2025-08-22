@@ -1,25 +1,61 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaChevronDown, FaFilter, FaTimes, FaSearch } from 'react-icons/fa';
+import axios from 'axios';
 
 const CategoryFilter = ({ onCategoryChange, selectedCategory }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [isMobile, setIsMobile] = useState(false);
+    const [categories, setCategories] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    // Mock categories - in real app, these would come from your API
-    const categories = [
-        { id: '', name: 'All Categories', count: 150, icon: '🏪' },
-        { id: 'electronics', name: 'Electronics', count: 45, icon: '📱' },
-        { id: 'clothing', name: 'Clothing & Fashion', count: 38, icon: '👕' },
-        { id: 'home', name: 'Home & Garden', count: 22, icon: '🏠' },
-        { id: 'sports', name: 'Sports & Outdoors', count: 18, icon: '⚽' },
-        { id: 'books', name: 'Books & Media', count: 15, icon: '📚' },
-        { id: 'automotive', name: 'Automotive', count: 12, icon: '🚗' },
-        { id: 'beauty', name: 'Beauty & Health', count: 25, icon: '💄' },
-        { id: 'toys', name: 'Toys & Games', count: 20, icon: '🎮' },
-        { id: 'food', name: 'Food & Beverages', count: 30, icon: '🍕' },
-    ];
+    // Category icons mapping
+    const categoryIcons = {
+        'Electronics': '📱',
+        'Clothing': '👕', 
+        'Books': '📚',
+        'Home Appliances': '🏠',
+        'Sports': '⚽',
+        'default': '📦'
+    };
+
+    // Fetch categories from API
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await axios.get('https://myjamii-store.onrender.com/categories');
+                const dbCategories = response.data.categories.map(cat => ({
+                    id: cat.id,
+                    name: cat.name,
+                    description: cat.description,
+                    icon: categoryIcons[cat.name] || categoryIcons.default,
+                    count: cat.product_count || 0
+                }));
+                
+                // Calculate total product count for "All Categories"
+                const totalProductCount = dbCategories.reduce((sum, cat) => sum + cat.count, 0);
+                
+                // Add "All Categories" option
+                const allCategories = [
+                    { id: '', name: 'All Categories', count: totalProductCount, icon: '🏪', description: 'Show all products' },
+                    ...dbCategories
+                ];
+                
+                setCategories(allCategories);
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+                // Fallback categories if API fails
+                setCategories([
+                    { id: '', name: 'All Categories', count: 0, icon: '🏪', description: 'Show all products' }
+                ]);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchCategories();
+    }, []);
 
     useEffect(() => {
         const checkMobile = () => {
@@ -35,7 +71,9 @@ const CategoryFilter = ({ onCategoryChange, selectedCategory }) => {
         category.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const selectedCategoryData = categories.find(cat => cat.id === selectedCategory) || categories[0];
+    const selectedCategoryData = categories.find(cat => cat.id === selectedCategory) || 
+        categories.find(cat => cat.id === '') || 
+        { id: '', name: 'Loading...', icon: '🏪' };
 
     const handleCategorySelect = (categoryId) => {
         onCategoryChange(categoryId);
@@ -142,16 +180,16 @@ const CategoryFilter = ({ onCategoryChange, selectedCategory }) => {
             >
                 <div className="flex items-center space-x-3">
                     <FaFilter className="text-gray-500 w-4 h-4" />
-                    <span className="text-gray-700 font-medium">{selectedCategoryData.name}</span>
+                    <span className="text-gray-700 font-medium">{selectedCategoryData?.name || 'Loading...'}</span>
                     {selectedCategory && (
-                        <motion.button
+                        <motion.span
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
                             onClick={clearCategory}
-                            className="p-1 hover:bg-gray-200 rounded-full transition-colors duration-200"
+                            className="p-1 hover:bg-gray-200 rounded-full transition-colors duration-200 cursor-pointer"
                         >
                             <FaTimes className="w-3 h-3 text-gray-500" />
-                        </motion.button>
+                        </motion.span>
                     )}
                 </div>
                 <FaChevronDown className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
@@ -213,6 +251,18 @@ const CategoryFilter = ({ onCategoryChange, selectedCategory }) => {
         </div>
     );
 
+    // Show loading state if categories are still loading
+    if (loading) {
+        return (
+            <div className="w-full flex justify-center mb-6">
+                <div className="flex items-center space-x-2 px-6 py-3 bg-gray-100 border border-gray-300 rounded-xl">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+                    <span className="text-gray-600">Loading categories...</span>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="w-full flex justify-center mb-6">
             {isMobile ? (
@@ -225,17 +275,17 @@ const CategoryFilter = ({ onCategoryChange, selectedCategory }) => {
                     >
                         <FaFilter className="text-gray-500 w-4 h-4" />
                         <span className="text-gray-700 font-medium">
-                            {selectedCategory ? selectedCategoryData.name : 'Filter Categories'}
+                            {selectedCategory ? (selectedCategoryData?.name || 'Loading...') : 'Filter Categories'}
                         </span>
                         {selectedCategory && (
-                            <motion.button
+                            <motion.span
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
                                 onClick={clearCategory}
-                                className="p-1 hover:bg-gray-200 rounded-full transition-colors duration-200"
+                                className="p-1 hover:bg-gray-200 rounded-full transition-colors duration-200 cursor-pointer"
                             >
                                 <FaTimes className="w-3 h-3 text-gray-500" />
-                            </motion.button>
+                            </motion.span>
                         )}
                     </motion.button>
                     <MobileDrawer />

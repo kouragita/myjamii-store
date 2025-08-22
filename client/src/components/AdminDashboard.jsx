@@ -21,8 +21,719 @@ import {
     FaCheck,
     FaTimes,
     FaSpinner,
-    FaExclamationCircle
+    FaExclamationCircle,
+    FaBrain,
+    FaMagic,
+    FaRobot,
+    FaLightbulb,
+    FaCog,
+    FaChartLine,
+    FaSearchengin,
+    FaGlobe,
+    FaKeyboard,
+    FaBolt,
+    FaStar,
+    FaDollarSign,
+    FaLayerGroup,
+    FaClone,
+    FaDatabase,
+    FaSync,
+    FaPlay,
+    FaPause,
+    FaInfo,
+    FaClock
 } from 'react-icons/fa';
+import adminAIService from '../services/adminAIService';
+
+// Product Optimization Panel Component
+const ProductOptimizationPanel = ({ products, categories, onOptimize, onPatch, optimizationStatus, showNotification }) => {
+    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [optimizationData, setOptimizationData] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [categoryFilter, setCategoryFilter] = useState('');
+
+    const filteredProducts = products.filter(product => {
+        const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = !categoryFilter || product.category_id === parseInt(categoryFilter);
+        return matchesSearch && matchesCategory;
+    });
+
+    const handleViewOptimization = async (productId) => {
+        try {
+            const result = await adminAIService.getOptimizationStatus(productId);
+            if (result.success && result.data.has_optimization && result.data.optimization) {
+                // The optimization object contains ai_content which is the actual JSON data we need
+                setOptimizationData(adminAIService.formatOptimization(result.data.optimization.ai_content));
+                setSelectedProduct(products.find(p => p.id === productId));
+            } else {
+                // No optimization found, clear preview
+                setOptimizationData(null);
+                setSelectedProduct(null);
+                showNotification('No optimization found for this product. Please optimize it first.', 'warning');
+            }
+        } catch (error) {
+            console.error('Failed to load optimization:', error);
+            showNotification('Failed to load optimization preview. Please try again.', 'error');
+        }
+    };
+
+    return (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Products List */}
+            <div className="lg:col-span-2">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+                    <div className="p-6 border-b border-gray-200">
+                        <h3 className="text-lg font-semibold text-gray-900 flex items-center mb-4">
+                            <FaBrain className="w-5 h-5 mr-2 text-purple-500" />
+                            Product AI Optimization
+                        </h3>
+                        
+                        {/* Search and Filter */}
+                        <div className="flex flex-col sm:flex-row gap-4">
+                            <div className="flex-1 relative">
+                                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                                <input
+                                    type="text"
+                                    placeholder="Search products..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="pl-12 input-field"
+                                />
+                            </div>
+                            <select
+                                value={categoryFilter}
+                                onChange={(e) => setCategoryFilter(e.target.value)}
+                                className="input-field sm:w-48"
+                            >
+                                <option value="">All Categories</option>
+                                {categories.map(category => (
+                                    <option key={category.id} value={category.id}>
+                                        {category.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="divide-y divide-gray-200">
+                        {filteredProducts.map(product => {
+                            const status = optimizationStatus[product.id];
+                            return (
+                                <div key={product.id} className="p-6 hover:bg-gray-50 transition-colors">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center space-x-4">
+                                            <img
+                                                src={product.image_url || '/placeholder.jpg'}
+                                                alt={product.name}
+                                                className="w-12 h-12 rounded-lg object-cover border"
+                                            />
+                                            <div>
+                                                <h4 className="font-medium text-gray-900">{product.name}</h4>
+                                                <p className="text-sm text-gray-500">${product.price}</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="flex items-center space-x-2">
+                                            {status === 'optimizing' && (
+                                                <FaSpinner className="w-4 h-4 text-blue-500 animate-spin" />
+                                            )}
+                                            {status === 'completed' && (
+                                                <FaCheck className="w-4 h-4 text-green-500" />
+                                            )}
+                                            {status === 'error' && (
+                                                <FaTimes className="w-4 h-4 text-red-500" />
+                                            )}
+                                            
+                                            <button
+                                                onClick={() => handleViewOptimization(product.id)}
+                                                className="text-blue-600 hover:text-blue-800 p-2 rounded-lg hover:bg-blue-50"
+                                                title="View Optimization"
+                                            >
+                                                <FaEye className="w-4 h-4" />
+                                            </button>
+                                            
+                                            <button
+                                                onClick={() => onOptimize(product.id)}
+                                                disabled={status === 'optimizing'}
+                                                className="bg-purple-600 text-white px-3 py-1 rounded-lg hover:bg-purple-700 disabled:opacity-50 text-sm flex items-center"
+                                            >
+                                                <FaMagic className="w-3 h-3 mr-1" />
+                                                {status === 'optimizing' ? 'Optimizing...' : 'Optimize'}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            </div>
+
+            {/* Optimization Preview */}
+            <div className="lg:col-span-1">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 sticky top-24">
+                    <div className="p-6 border-b border-gray-200">
+                        <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                            <FaLightbulb className="w-5 h-5 mr-2 text-yellow-500" />
+                            Optimization Preview
+                        </h3>
+                    </div>
+                    
+                    <div className="p-6">
+                        {selectedProduct && optimizationData ? (
+                            <div className="space-y-4">
+                                <div>
+                                    <h4 className="font-medium text-gray-900 mb-2">{selectedProduct.name}</h4>
+                                    <div className="text-xs text-gray-500 mb-4">
+                                        Quality Score: {adminAIService.getQualityScore(optimizationData)}%
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Enhanced Description
+                                    </label>
+                                    <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+                                        {optimizationData.enhancedDescription}
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Meta Title
+                                    </label>
+                                    <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded-lg">
+                                        {optimizationData.metaTitle}
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Keywords
+                                    </label>
+                                    <div className="flex flex-wrap gap-2">
+                                        {optimizationData.keywords.split(',').map((keyword, index) => (
+                                            <span key={index} className="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs">
+                                                {keyword.trim()}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                                
+                                <div className="pt-4 space-y-2">
+                                    <button
+                                        onClick={() => onPatch(selectedProduct.id, false)}
+                                        className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 text-sm"
+                                    >
+                                        Preview Changes
+                                    </button>
+                                    <button
+                                        onClick={() => onPatch(selectedProduct.id, true)}
+                                        className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 text-sm"
+                                    >
+                                        Apply to Database
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="text-center py-8 text-gray-500">
+                                <FaLightbulb className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                                <p>Select a product to view AI optimization</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// AI Analytics Panel Component  
+const AIAnalyticsPanel = ({ analytics, isLoading }) => {
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center py-12">
+                <FaSpinner className="w-8 h-8 text-purple-500 animate-spin" />
+            </div>
+        );
+    }
+
+    if (!analytics) {
+        return (
+            <div className="text-center py-12">
+                <FaChartLine className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-500">No analytics data available</p>
+            </div>
+        );
+    }
+
+    const roi = adminAIService.calculateROI(analytics);
+
+    return (
+        <div className="space-y-8">
+            {/* ROI Calculator */}
+            <div className="bg-gradient-to-r from-green-500 to-blue-500 rounded-xl p-6 text-white">
+                <h3 className="text-xl font-bold mb-4 flex items-center">
+                    <FaDollarSign className="w-5 h-5 mr-2" />
+                    AI Investment ROI
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <div className="text-2xl font-bold">${roi.totalCost.toFixed(4)}</div>
+                        <div className="text-green-100">Total Investment</div>
+                    </div>
+                    <div>
+                        <div className="text-2xl font-bold">${roi.estimatedRevenue.toFixed(0)}</div>
+                        <div className="text-green-100">Est. Revenue Gain</div>
+                    </div>
+                    <div>
+                        <div className="text-2xl font-bold">{roi.roi}%</div>
+                        <div className="text-green-100">ROI</div>
+                    </div>
+                    <div>
+                        <div className="text-2xl font-bold">{roi.paybackPeriod}</div>
+                        <div className="text-green-100">Payback Period</div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Category Performance */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+                <div className="p-6 border-b border-gray-200">
+                    <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                        <FaTags className="w-5 h-5 mr-2 text-blue-500" />
+                        Category AI Performance
+                    </h3>
+                </div>
+                <div className="p-6">
+                    {analytics.category_breakdown ? (
+                        <div className="space-y-4">
+                            {Object.entries(analytics.category_breakdown).map(([categoryName, stats]) => (
+                                <div key={categoryName} className="p-4 border border-gray-200 rounded-lg">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <h4 className="font-medium text-gray-900">{categoryName}</h4>
+                                        <span className="text-sm text-gray-500">
+                                            {stats.optimization_rate.toFixed(1)}% optimized
+                                        </span>
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-4 text-sm">
+                                        <div>
+                                            <p className="text-gray-600">Products</p>
+                                            <p className="font-semibold">{stats.optimized_products}/{stats.total_products}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-gray-600">AI Cost</p>
+                                            <p className="font-semibold">${stats.total_cost.toFixed(4)}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-gray-600">Progress</p>
+                                            <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
+                                                <div 
+                                                    className="bg-purple-500 h-2 rounded-full"
+                                                    style={{ width: `${stats.optimization_rate}%` }}
+                                                ></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-gray-500 text-center py-4">No category data available</p>
+                    )}
+                </div>
+            </div>
+
+            {/* Recent Optimizations */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+                <div className="p-6 border-b border-gray-200">
+                    <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                        <FaClock className="w-5 h-5 mr-2 text-green-500" />
+                        Recent AI Optimizations
+                    </h3>
+                </div>
+                <div className="p-6">
+                    {analytics.recent_optimizations && analytics.recent_optimizations.length > 0 ? (
+                        <div className="space-y-4">
+                            {analytics.recent_optimizations.map((optimization, index) => (
+                                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div>
+                                        <p className="font-medium text-gray-900">{optimization.product_name}</p>
+                                        <p className="text-sm text-gray-500">
+                                            {new Date(optimization.optimization_date).toLocaleDateString()}
+                                        </p>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="text-sm font-medium">{optimization.tokens_used} tokens</p>
+                                        <p className="text-sm text-gray-500">{optimization.processing_time_ms}ms</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-gray-500 text-center py-4">No recent optimizations</p>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// SEO Performance Panel Component
+const SEOPerformancePanel = ({ performance, isLoading }) => {
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center py-12">
+                <FaSpinner className="w-8 h-8 text-blue-500 animate-spin" />
+            </div>
+        );
+    }
+
+    if (!performance) {
+        return (
+            <div className="text-center py-12">
+                <FaSearchengin className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-500">No SEO performance data available</p>
+            </div>
+        );
+    }
+
+    return (
+        <div className="space-y-8">
+            {/* SEO Health Overview */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+                <div className="p-6 border-b border-gray-200">
+                    <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                        <FaGlobe className="w-5 h-5 mr-2 text-blue-500" />
+                        SEO Health Overview
+                    </h3>
+                </div>
+                <div className="p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="text-center">
+                            <div className="text-3xl font-bold text-blue-600">
+                                {performance.seo_health?.average_title_length?.toFixed(0) || 0}
+                            </div>
+                            <div className="text-gray-600">Avg Title Length</div>
+                            <div className="text-sm text-gray-500">Optimal: 50-60 chars</div>
+                        </div>
+                        <div className="text-center">
+                            <div className="text-3xl font-bold text-green-600">
+                                {performance.seo_health?.average_description_length?.toFixed(0) || 0}
+                            </div>
+                            <div className="text-gray-600">Avg Description Length</div>
+                            <div className="text-sm text-gray-500">Optimal: 150-160 chars</div>
+                        </div>
+                        <div className="text-center">
+                            <div className="text-3xl font-bold text-purple-600">
+                                {performance.seo_health?.average_ctr?.toFixed(2) || 0}%
+                            </div>
+                            <div className="text-gray-600">Avg Click-Through Rate</div>
+                            <div className="text-sm text-gray-500">Industry avg: 2-5%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Top Performers */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+                <div className="p-6 border-b border-gray-200">
+                    <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                        <FaStar className="w-5 h-5 mr-2 text-yellow-500" />
+                        Top SEO Performers
+                    </h3>
+                </div>
+                <div className="p-6">
+                    {performance.top_performers && performance.top_performers.length > 0 ? (
+                        <div className="space-y-4">
+                            {performance.top_performers.map((product, index) => (
+                                <div key={product.product_id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                                    <div className="flex items-center space-x-4">
+                                        <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                                            <span className="text-sm font-bold text-yellow-600">#{index + 1}</span>
+                                        </div>
+                                        <div>
+                                            <h4 className="font-medium text-gray-900">{product.product_name}</h4>
+                                            <p className="text-sm text-gray-500">{product.meta_title}</p>
+                                        </div>
+                                    </div>
+                                    <div className="text-right">
+                                        <div className="text-lg font-bold text-green-600">{product.ctr.toFixed(2)}%</div>
+                                        <div className="text-sm text-gray-500">{product.clicks} clicks</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-gray-500 text-center py-4">No performance data available yet</p>
+                    )}
+                </div>
+            </div>
+
+            {/* SEO Recommendations */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+                <div className="p-6 border-b border-gray-200">
+                    <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                        <FaLightbulb className="w-5 h-5 mr-2 text-orange-500" />
+                        AI Recommendations
+                    </h3>
+                </div>
+                <div className="p-6">
+                    {performance.recommendations && performance.recommendations.length > 0 ? (
+                        <div className="space-y-3">
+                            {performance.recommendations.map((recommendation, index) => (
+                                <div key={index} className="flex items-start space-x-3 p-3 bg-orange-50 rounded-lg">
+                                    <FaInfo className="w-4 h-4 text-orange-500 mt-0.5" />
+                                    <p className="text-sm text-orange-800">{recommendation}</p>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-gray-500 text-center py-4">No recommendations available</p>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// Batch Optimization Panel Component
+const BatchOptimizationPanel = ({ products, categories, onBatchOptimize, batchProgress, selectedProducts, setSelectedProducts }) => {
+    const [batchMode, setBatchMode] = useState('category');
+    const [selectedCategory, setSelectedCategory] = useState('');
+    const [batchLimit, setBatchLimit] = useState(10);
+
+    const handleProductSelect = (productId) => {
+        setSelectedProducts(prev => 
+            prev.includes(productId) 
+                ? prev.filter(id => id !== productId)
+                : [...prev, productId]
+        );
+    };
+
+    const handleSelectAll = () => {
+        if (selectedProducts.length === products.length) {
+            setSelectedProducts([]);
+        } else {
+            setSelectedProducts(products.map(p => p.id));
+        }
+    };
+
+    const handleBatchOptimize = () => {
+        if (batchMode === 'category' && selectedCategory) {
+            onBatchOptimize({ categoryId: parseInt(selectedCategory), limit: batchLimit });
+        } else if (batchMode === 'selected' && selectedProducts.length > 0) {
+            onBatchOptimize({ productIds: selectedProducts });
+        }
+    };
+
+    return (
+        <div className="space-y-8">
+            {/* Batch Configuration */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+                <div className="p-6 border-b border-gray-200">
+                    <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                        <FaLayerGroup className="w-5 h-5 mr-2 text-purple-500" />
+                        Batch AI Optimization
+                    </h3>
+                </div>
+                <div className="p-6">
+                    <div className="space-y-6">
+                        {/* Batch Mode Selection */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-3">
+                                Optimization Mode
+                            </label>
+                            <div className="flex space-x-4">
+                                <label className="flex items-center">
+                                    <input
+                                        type="radio"
+                                        value="category"
+                                        checked={batchMode === 'category'}
+                                        onChange={(e) => setBatchMode(e.target.value)}
+                                        className="mr-2"
+                                    />
+                                    By Category
+                                </label>
+                                <label className="flex items-center">
+                                    <input
+                                        type="radio"
+                                        value="selected"
+                                        checked={batchMode === 'selected'}
+                                        onChange={(e) => setBatchMode(e.target.value)}
+                                        className="mr-2"
+                                    />
+                                    Selected Products
+                                </label>
+                            </div>
+                        </div>
+
+                        {/* Category Mode */}
+                        {batchMode === 'category' && (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Select Category
+                                    </label>
+                                    <select
+                                        value={selectedCategory}
+                                        onChange={(e) => setSelectedCategory(e.target.value)}
+                                        className="input-field"
+                                    >
+                                        <option value="">Choose category...</option>
+                                        {categories.map(category => (
+                                            <option key={category.id} value={category.id}>
+                                                {category.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Max Products
+                                    </label>
+                                    <input
+                                        type="number"
+                                        value={batchLimit}
+                                        onChange={(e) => setBatchLimit(parseInt(e.target.value))}
+                                        min="1"
+                                        max="50"
+                                        className="input-field"
+                                    />
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Selected Mode */}
+                        {batchMode === 'selected' && (
+                            <div>
+                                <div className="flex items-center justify-between mb-4">
+                                    <label className="block text-sm font-medium text-gray-700">
+                                        Select Products ({selectedProducts.length} selected)
+                                    </label>
+                                    <button
+                                        onClick={handleSelectAll}
+                                        className="text-sm text-purple-600 hover:text-purple-800"
+                                    >
+                                        {selectedProducts.length === products.length ? 'Deselect All' : 'Select All'}
+                                    </button>
+                                </div>
+                                <div className="max-h-60 overflow-y-auto border border-gray-200 rounded-lg">
+                                    {products.map(product => (
+                                        <label key={product.id} className="flex items-center p-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0">
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedProducts.includes(product.id)}
+                                                onChange={() => handleProductSelect(product.id)}
+                                                className="mr-3"
+                                            />
+                                            <img
+                                                src={product.image_url || '/placeholder.jpg'}
+                                                alt={product.name}
+                                                className="w-8 h-8 rounded object-cover mr-3"
+                                            />
+                                            <div>
+                                                <div className="font-medium text-gray-900">{product.name}</div>
+                                                <div className="text-sm text-gray-500">${product.price}</div>
+                                            </div>
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Action Button */}
+                        <div className="pt-4">
+                            <button
+                                onClick={handleBatchOptimize}
+                                disabled={
+                                    batchProgress?.status === 'running' ||
+                                    (batchMode === 'category' && !selectedCategory) ||
+                                    (batchMode === 'selected' && selectedProducts.length === 0)
+                                }
+                                className="w-full bg-purple-600 text-white py-3 px-6 rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                            >
+                                {batchProgress?.status === 'running' ? (
+                                    <>
+                                        <FaSpinner className="w-4 h-4 mr-2 animate-spin" />
+                                        Optimizing...
+                                    </>
+                                ) : (
+                                    <>
+                                        <FaBolt className="w-4 h-4 mr-2" />
+                                        Start Batch Optimization
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Batch Progress */}
+            {batchProgress && (
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+                    <div className="p-6 border-b border-gray-200">
+                        <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                            <FaSync className="w-5 h-5 mr-2 text-blue-500" />
+                            Batch Progress
+                        </h3>
+                    </div>
+                    <div className="p-6">
+                        {batchProgress.status === 'running' && (
+                            <div>
+                                <div className="flex items-center justify-between mb-2">
+                                    <span className="text-sm text-gray-600">Processing...</span>
+                                    <span className="text-sm text-gray-600">{batchProgress.progress}%</span>
+                                </div>
+                                <div className="w-full bg-gray-200 rounded-full h-2">
+                                    <div 
+                                        className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                                        style={{ width: `${batchProgress.progress}%` }}
+                                    ></div>
+                                </div>
+                            </div>
+                        )}
+
+                        {batchProgress.status === 'completed' && (
+                            <div className="text-center py-4">
+                                <FaCheck className="w-12 h-12 text-green-500 mx-auto mb-4" />
+                                <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                                    Batch Optimization Complete!
+                                </h4>
+                                <p className="text-gray-600">
+                                    Successfully optimized {batchProgress.results?.optimized_count} products
+                                </p>
+                                <div className="mt-4 p-4 bg-green-50 rounded-lg">
+                                    <div className="grid grid-cols-2 gap-4 text-sm">
+                                        <div>
+                                            <div className="font-medium">Total Cost</div>
+                                            <div>${batchProgress.results?.batch_summary?.total_cost_cents / 100 || 0}</div>
+                                        </div>
+                                        <div>
+                                            <div className="font-medium">Avg Time</div>
+                                            <div>{batchProgress.results?.batch_summary?.average_processing_time || 0}ms</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {batchProgress.status === 'error' && (
+                            <div className="text-center py-4">
+                                <FaTimes className="w-12 h-12 text-red-500 mx-auto mb-4" />
+                                <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                                    Batch Optimization Failed
+                                </h4>
+                                <p className="text-red-600">{batchProgress.error}</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
 
 // Product validation schema
 const productValidationSchema = Yup.object({
@@ -55,6 +766,263 @@ const categoryValidationSchema = Yup.object({
     description: Yup.string()
         .max(200, 'Description must be less than 200 characters')
 });
+
+// AI Management Tab Component
+const AIManagementTab = ({ products, categories, onProductUpdate, showNotification }) => {
+    const [aiAnalytics, setAiAnalytics] = useState(null);
+    const [seoPerformance, setSeoPerformance] = useState(null);
+    const [optimizationStatus, setOptimizationStatus] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
+    const [activeAITab, setActiveAITab] = useState('optimize');
+    const [selectedProducts, setSelectedProducts] = useState([]);
+    const [batchProgress, setBatchProgress] = useState(null);
+
+    useEffect(() => {
+        loadAIData();
+    }, []);
+
+    const loadAIData = async () => {
+        setIsLoading(true);
+        try {
+            const [analyticsResult, seoResult] = await Promise.all([
+                adminAIService.getAIAnalytics({ days: 30 }),
+                adminAIService.getSEOPerformance()
+            ]);
+
+            if (analyticsResult.success) {
+                setAiAnalytics(analyticsResult.data);
+            }
+
+            if (seoResult.success) {
+                setSeoPerformance(seoResult.data);
+            }
+        } catch (error) {
+            console.error('Failed to load AI data:', error);
+            showNotification('Failed to load AI data', 'error');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleOptimizeProduct = async (productId) => {
+        try {
+            setOptimizationStatus(prev => ({ ...prev, [productId]: 'optimizing' }));
+            
+            const result = await adminAIService.optimizeProduct(productId);
+            
+            if (result.success) {
+                setOptimizationStatus(prev => ({ ...prev, [productId]: 'completed' }));
+                showNotification(`Product ${productId} optimized successfully!`);
+                loadAIData(); // Refresh analytics
+            } else {
+                setOptimizationStatus(prev => ({ ...prev, [productId]: 'error' }));
+                showNotification(result.error, 'error');
+            }
+        } catch (error) {
+            setOptimizationStatus(prev => ({ ...prev, [productId]: 'error' }));
+            showNotification('Optimization failed', 'error');
+        }
+    };
+
+    const handlePatchProduct = async (productId, applyChanges = false) => {
+        try {
+            const result = await adminAIService.patchProduct(productId, applyChanges);
+            
+            if (result.success) {
+                if (applyChanges) {
+                    showNotification(`Product ${productId} patched successfully!`);
+                    onProductUpdate(); // Refresh products list
+                } else {
+                    showNotification('Preview generated successfully');
+                }
+                return result.data;
+            } else {
+                showNotification(result.error, 'error');
+                return null;
+            }
+        } catch (error) {
+            showNotification('Patching failed', 'error');
+            return null;
+        }
+    };
+
+    const handleBatchOptimize = async (options) => {
+        try {
+            setBatchProgress({ status: 'running', progress: 0 });
+            
+            const result = await adminAIService.batchOptimize(options);
+            
+            if (result.success) {
+                setBatchProgress({ 
+                    status: 'completed', 
+                    progress: 100,
+                    results: result.data 
+                });
+                showNotification(`Batch optimization completed! Optimized ${result.data.optimized_count} products`);
+                loadAIData();
+            } else {
+                setBatchProgress({ status: 'error', error: result.error });
+                showNotification(result.error, 'error');
+            }
+        } catch (error) {
+            setBatchProgress({ status: 'error', error: 'Batch optimization failed' });
+            showNotification('Batch optimization failed', 'error');
+        }
+    };
+
+    const aiTabs = [
+        { id: 'optimize', label: 'AI Optimization', icon: FaBrain },
+        { id: 'analytics', label: 'AI Analytics', icon: FaChartLine },
+        { id: 'seo-performance', label: 'SEO Performance', icon: FaSearchengin },
+        { id: 'batch-tools', label: 'Batch Tools', icon: FaLayerGroup }
+    ];
+
+    const optimizedProductsCount = aiAnalytics?.summary?.optimized_products_count || 0;
+    const totalCost = aiAnalytics?.summary?.total_cost_dollars || 0;
+    const averageQuality = aiAnalytics?.summary?.average_quality_score || 0;
+
+    return (
+        <div className="space-y-8">
+            {/* AI Management Header */}
+            <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl p-6 text-white">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h2 className="text-2xl font-bold flex items-center">
+                            <FaBrain className="w-6 h-6 mr-3" />
+                            AI-Powered SEO Management
+                        </h2>
+                        <p className="text-purple-100 mt-1">
+                            Intelligent product optimization with advanced analytics
+                        </p>
+                    </div>
+                    <div className="text-right">
+                        <div className="text-3xl font-bold">{optimizedProductsCount}</div>
+                        <div className="text-purple-200 text-sm">Products Optimized</div>
+                    </div>
+                </div>
+            </div>
+
+            {/* AI Stats Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {[
+                    {
+                        title: 'AI Optimizations',
+                        value: optimizedProductsCount,
+                        icon: FaMagic,
+                        color: 'bg-purple-500',
+                        change: '+12 this week'
+                    },
+                    {
+                        title: 'Total AI Cost',
+                        value: `$${totalCost.toFixed(4)}`,
+                        icon: FaDollarSign,
+                        color: 'bg-green-500',
+                        change: 'Cost efficient'
+                    },
+                    {
+                        title: 'Quality Score',
+                        value: `${averageQuality}%`,
+                        icon: FaStar,
+                        color: 'bg-yellow-500',
+                        change: 'High quality'
+                    },
+                    {
+                        title: 'SEO Improvements',
+                        value: seoPerformance?.seo_health?.total_optimized_products || 0,
+                        icon: FaSearchengin,
+                        color: 'bg-blue-500',
+                        change: 'Enhanced'
+                    }
+                ].map((stat, index) => (
+                    <motion.div
+                        key={stat.title}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        className="bg-white rounded-xl shadow-sm p-6 border border-gray-200"
+                    >
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-medium text-gray-600 mb-1">
+                                    {stat.title}
+                                </p>
+                                <p className="text-2xl font-bold text-gray-900">
+                                    {stat.value}
+                                </p>
+                                <p className="text-sm text-green-600 mt-1">
+                                    {stat.change}
+                                </p>
+                            </div>
+                            <div className={`${stat.color} rounded-lg p-3`}>
+                                <stat.icon className="w-6 h-6 text-white" />
+                            </div>
+                        </div>
+                    </motion.div>
+                ))}
+            </div>
+
+            {/* AI Sub-tabs */}
+            <div className="border-b border-gray-200">
+                <nav className="-mb-px flex space-x-8">
+                    {aiTabs.map((tab) => (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveAITab(tab.id)}
+                            className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                                activeAITab === tab.id
+                                    ? 'border-purple-500 text-purple-600'
+                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                            }`}
+                        >
+                            <tab.icon className="w-4 h-4" />
+                            <span>{tab.label}</span>
+                        </button>
+                    ))}
+                </nav>
+            </div>
+
+            {/* AI Optimization Tab */}
+            {activeAITab === 'optimize' && (
+                <ProductOptimizationPanel 
+                    products={products}
+                    categories={categories}
+                    onOptimize={handleOptimizeProduct}
+                    onPatch={handlePatchProduct}
+                    optimizationStatus={optimizationStatus}
+                    showNotification={showNotification}
+                />
+            )}
+
+            {/* AI Analytics Tab */}
+            {activeAITab === 'analytics' && (
+                <AIAnalyticsPanel 
+                    analytics={aiAnalytics}
+                    isLoading={isLoading}
+                />
+            )}
+
+            {/* SEO Performance Tab */}
+            {activeAITab === 'seo-performance' && (
+                <SEOPerformancePanel 
+                    performance={seoPerformance}
+                    isLoading={isLoading}
+                />
+            )}
+
+            {/* Batch Tools Tab */}
+            {activeAITab === 'batch-tools' && (
+                <BatchOptimizationPanel 
+                    products={products}
+                    categories={categories}
+                    onBatchOptimize={handleBatchOptimize}
+                    batchProgress={batchProgress}
+                    selectedProducts={selectedProducts}
+                    setSelectedProducts={setSelectedProducts}
+                />
+            )}
+        </div>
+    );
+};
 
 // Analytics Tab Component
 const AnalyticsTab = ({ products, categories }) => {
@@ -540,7 +1508,8 @@ const AdminDashboard = () => {
                             {[
                                 { id: 'products', label: 'Products', icon: FaBox },
                                 { id: 'categories', label: 'Categories', icon: FaTags },
-                                { id: 'analytics', label: 'Analytics', icon: FaChartBar }
+                                { id: 'analytics', label: 'Analytics', icon: FaChartBar },
+                                { id: 'ai-management', label: 'AI Management', icon: FaBrain }
                             ].map((tab) => (
                                 <button
                                     key={tab.id}
@@ -995,6 +1964,16 @@ const AdminDashboard = () => {
                 {/* Analytics Tab */}
                 {activeTab === 'analytics' && (
                     <AnalyticsTab products={products} categories={categories} />
+                )}
+
+                {/* AI Management Tab */}
+                {activeTab === 'ai-management' && (
+                    <AIManagementTab 
+                        products={products} 
+                        categories={categories}
+                        onProductUpdate={fetchProducts}
+                        showNotification={showNotification}
+                    />
                 )}
             </div>
         </div>
