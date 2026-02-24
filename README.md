@@ -5,6 +5,7 @@
 ### MyJamii Store - AI-Powered E-commerce Platform
 
 Welcome to the MyJamii Store, a next-generation e-commerce platform supercharged with cutting-edge AI for unparalleled SEO performance and content generation. This project demonstrates a full-stack e-commerce solution with a React frontend and a Python/Flask backend, now enhanced with the lightning-fast Groq AI inference engine.
+Link to the application: <https://myjamii-store-client.onrender.com/>
 
 ### ✨ Key Features
 
