@@ -424,7 +424,7 @@ This application demonstrates a full-featured e-commerce solution, showcasing Re
 
 ## API Integration
 
-The application integrates with a backend API hosted at <https://myjamii-store.onrender.com>. Ensure the API is running and accessible for full functionality.
+The application integrates with a backend API hosted at <https://myjamii-store-client.onrender.com/>. Ensure the API is running and accessible for full functionality.
 
 ## Contributing
 
